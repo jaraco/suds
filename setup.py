@@ -60,8 +60,8 @@ if script_folder != current_folder:
     print("ERROR: Suds library setup script needs to be run from the folder "
         "containing it.")
     print()
-    print("Current folder: %s" % current_folder)
-    print("Script folder: %s" % script_folder)
+    print(("Current folder: %s" % current_folder))
+    print(("Script folder: %s" % script_folder))
     sys.exit(-2)
 
 # Load the suds library version information directly into this module without
