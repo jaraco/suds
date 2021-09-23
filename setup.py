@@ -105,30 +105,22 @@ if sys.version_info >= (3, 0):
 #   Wrap long_description at 72 characters since PKG-INFO package distribution
 # metadata file stores this text with an 8 space indentation.
 long_description = """
----------------------------------------
-Lightweight SOAP client (Jurko's fork).
----------------------------------------
-
-  Based on the original 'suds' project by Jeff Ortel (jortel at redhat
-dot com) hosted at 'http://fedorahosted.org/suds'.
+-----------------------
+Lightweight SOAP client
+-----------------------
 
   'Suds' is a lightweight SOAP-based web service client for Python
 licensed under LGPL (see the LICENSE.txt file included in the
 distribution).
 
-  This is hopefully just a temporary fork of the original suds Python
-library project created because the original project development seems
-to have stalled. Should be reintegrated back into the original project
-if it ever gets revived again.
-
+  Based on the original 'suds' project by Jeff Ortel (jortel at redhat
+dot com) hosted at 'http://fedorahosted.org/suds' and the
+  'suds-jurko' project formerly hosted at Bitbucket (jurko/suds).
 """
 
-package_name = "suds-jurko"
+package_name = "suds-bis"
 version_tag = pkg_resources.safe_version(__version__)
-project_url = "http://bitbucket.org/jurko/suds"
-base_download_url = project_url + "/downloads"
-download_distribution_name = "%s-%s.tar.bz2" % (package_name, version_tag)
-download_url = "%s/%s" % (base_download_url, download_distribution_name)
+project_url = "https://github.com/jaraco/suds"
 
 # Support for integrating running the project' pytest based test suite directly
 # into this setup script so the test suite can be run by 'setup.py test'. Since
@@ -162,11 +154,10 @@ extra_setup_cmdclass.update(test=PyTest)
 setup(
     name=package_name,
     version=__version__,
-    description="Lightweight SOAP client (Jurko's fork)",
+    description="Lightweight SOAP client",
     long_description=long_description,
     keywords=["SOAP", "web", "service", "client"],
     url=project_url,
-    download_url=download_url,
     packages=find_packages(),
 
     # 'maintainer' will be listed as the distribution package author.
@@ -184,8 +175,8 @@ setup(
     # been corrected there or not.
     author="Jeff Ortel",
     author_email="jortel@redhat.com",
-    maintainer="Jurko Gospodnetic",
-    maintainer_email="jurko.gospodnetic@pke.hr",
+    maintainer="Jason R. Coombs",
+    maintainer_email="jaraco@jaraco.com",
 
     #   See PEP-301 for the classifier specification. For a complete list of
     # available classifiers see
