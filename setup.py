@@ -98,21 +98,9 @@ if sys.version_info >= (3, 0):
             x[1].append("__version__")
             break;
 
-#   Wrap long_description at 72 characters since PKG-INFO package distribution
-# metadata file stores this text with an 8 space indentation.
-long_description = """
------------------------
-Lightweight SOAP client
------------------------
+with open('README.rst') as strm:
+    long_description = strm.read()
 
-  'Suds' is a lightweight SOAP-based web service client for Python
-licensed under LGPL (see the LICENSE.txt file included in the
-distribution).
-
-  Based on the original 'suds' project by Jeff Ortel (jortel at redhat
-dot com) hosted at 'http://fedorahosted.org/suds' and the
-  'suds-jurko' project formerly hosted at Bitbucket (jurko/suds).
-"""
 
 package_name = "suds-bis"
 version_tag = pkg_resources.safe_version(__version__)
