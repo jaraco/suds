@@ -16,10 +16,6 @@
 # Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 # written by: Jeff Ortel ( jortel@redhat.com )
 
-# Automatically download & install an appropriate setuptools version if needed.
-import ez_setup
-ez_setup.use_setuptools()
-
 # 'setuptools' related packages.
 import pkg_resources
 from setuptools import setup, find_packages
