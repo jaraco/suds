@@ -123,8 +123,3 @@ def pytest_generate_tests(metafunc):
         return
     args, kwargs = mark.args[0](*mark.args[1:], **mark.kwargs)
     metafunc.parametrize(*args, **kwargs)
-
-
-def pytest_namespace():
-    """pytest hook publishing references in the toplevel pytest namespace."""
-    return {'indirect_parametrize': indirect_parametrize}
