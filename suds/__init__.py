@@ -150,14 +150,6 @@ def tostr(object, encoding=None):
         return str(object)
 
 
-#
-# Python 3 compatibility
-#
-
-if sys.version_info < (3, 0):
-    from io import StringIO as BytesIO
-else:
-    from io import BytesIO
 
 # Idea from 'http://lucumr.pocoo.org/2011/1/22/forwards-compatible-python'.
 class UnicodeMixin(object):

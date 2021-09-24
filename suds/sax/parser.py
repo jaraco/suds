@@ -26,6 +26,8 @@ containing the prefix and the URI.  Eg: I{('tns', 'http://myns')}
 
 """
 
+import io
+
 import suds
 from suds import *
 from suds.sax import *
@@ -129,7 +131,7 @@ class Parser:
             return handler.nodes[0]
         if string is not None:
             source = InputSource(None)
-            source.setByteStream(suds.BytesIO(string))
+            source.setByteStream(io.BytesIO(string))
             sax.parse(source)
             timer.stop()
             suds.metrics.log.debug('%s\nsax duration: %s', string, timer)

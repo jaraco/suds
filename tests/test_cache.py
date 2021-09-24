@@ -35,6 +35,7 @@ import suds.sax.parser
 import pytest
 
 import os
+import io
 import tempfile
 
 
@@ -87,7 +88,7 @@ def test_DocumentCache(tmpdir):
       </xsd:restriction>
    </xsd:simpleType>
 </xsd:element>""")
-    xml = suds.sax.parser.Parser().parse(suds.BytesIO(content))
+    xml = suds.sax.parser.Parser().parse(io.BytesIO(content))
     cache.put("unga1", xml.getChildren()[0])
     readXML = cache.get("unga1")
     assert isinstance(readXML, suds.sax.document.Document)
