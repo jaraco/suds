@@ -48,7 +48,7 @@ class Reader:
         @return: the mangled name.
         """
         h = abs(hash(name))
-        return '%s-%s' % (h, x)
+        return "%s-%s" % (h, x)
 
 
 class DocumentReader(Reader):
@@ -68,7 +68,7 @@ class DocumentReader(Reader):
         @rtype: I{Document}
         """
         cache = self.cache()
-        id = self.mangle(url, 'document')
+        id = self.mangle(url, "document")
         d = cache.get(id)
         if d is None:
             d = self.download(url)
@@ -144,7 +144,7 @@ class DefinitionsReader(Reader):
         @rtype: I{Definitions}
         """
         cache = self.cache()
-        id = self.mangle(url, 'wsdl')
+        id = self.mangle(url, "wsdl")
         d = cache.get(id)
         if d is None:
             d = self.fn(url, self.options)

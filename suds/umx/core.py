@@ -25,7 +25,7 @@ from suds.sax.text import Text
 from suds.sudsobject import Factory, merge
 
 
-reserved = {'class':'cls', 'def':'dfn'}
+reserved = {"class": "cls", "def": "dfn"}
 
 
 class Core:
@@ -80,11 +80,9 @@ class Core:
         if len(node.children) and node.hasText():
             return node
         attributes = AttrList(node.attributes)
-        if attributes.rlen() and \
-            not len(node.children) and \
-            node.hasText():
-                p = Factory.property(node.name, node.getText())
-                return merge(content.data, p)
+        if attributes.rlen() and not len(node.children) and node.hasText():
+            p = Factory.property(node.name, node.getText())
+            return merge(content.data, p)
         if len(content.data):
             return content.data
         lang = attributes.lang()
@@ -94,7 +92,7 @@ class Core:
             if self.nillable(content):
                 return None
             else:
-                return Text('', lang=lang)
+                return Text("", lang=lang)
         if isinstance(content.text, str):
             return Text(content.text, lang=lang)
         else:
@@ -124,7 +122,7 @@ class Core:
         @type content: L{Content}
         """
         key = name
-        key = '_%s' % reserved.get(key, key)
+        key = "_%s" % reserved.get(key, key)
         setattr(content.data, key, value)
 
     def append_children(self, content):
@@ -148,7 +146,13 @@ class Core:
                 if cval is None:
                     setattr(content.data, key, [])
                 else:
-                    setattr(content.data, key, [cval,])
+                    setattr(
+                        content.data,
+                        key,
+                        [
+                            cval,
+                        ],
+                    )
             else:
                 setattr(content.data, key, cval)
 

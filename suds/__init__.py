@@ -27,28 +27,33 @@ import importlib_metadata as metadata
 # Project properties
 #
 
-__version__ = metadata.version('suds-bis')
+__version__ = metadata.version("suds-bis")
 
 
 #
 # Exceptions
 #
 
+
 class MethodNotFound(Exception):
     def __init__(self, name):
         Exception.__init__(self, "Method not found: '%s'" % name)
+
 
 class PortNotFound(Exception):
     def __init__(self, name):
         Exception.__init__(self, "Port not found: '%s'" % name)
 
+
 class ServiceNotFound(Exception):
     def __init__(self, name):
         Exception.__init__(self, "Service not found: '%s'" % name)
 
+
 class TypeNotFound(Exception):
     def __init__(self, name):
         Exception.__init__(self, "Type not found: '%s'" % tostr(name))
+
 
 class BuildError(Exception):
     msg = """
@@ -58,8 +63,10 @@ class BuildError(Exception):
         ticket with a description of this error.
         Reason: %s
         """
+
     def __init__(self, name, exception):
         Exception.__init__(self, BuildError.msg % (name, exception))
+
 
 class SoapHeadersNotPermitted(Exception):
     msg = """
@@ -67,14 +74,15 @@ class SoapHeadersNotPermitted(Exception):
         SOAP headers for this method. Retry without the soapheaders keyword
         argument.
         """
+
     def __init__(self, name):
         Exception.__init__(self, self.msg % name)
 
+
 class WebFault(Exception):
     def __init__(self, fault, document):
-        if hasattr(fault, 'faultstring'):
-            Exception.__init__(self, "Server raised fault: '%s'" %
-                fault.faultstring)
+        if hasattr(fault, "faultstring"):
+            Exception.__init__(self, "Server raised fault: '%s'" % fault.faultstring)
         self.fault = fault
         self.document = document
 
@@ -83,9 +91,11 @@ class WebFault(Exception):
 # Logging
 #
 
+
 class Repr:
     def __init__(self, x):
         self.x = x
+
     def __str__(self):
         return repr(self.x)
 
@@ -94,63 +104,66 @@ class Repr:
 # Utility
 #
 
+
 class null:
     """
     The I{null} object.
     Used to pass NULL for optional XML nodes.
     """
+
     pass
 
+
 def objid(obj):
-    return obj.__class__.__name__ + ':' + hex(id(obj))
+    return obj.__class__.__name__ + ":" + hex(id(obj))
+
 
 def tostr(object, encoding=None):
-    """ get a unicode safe string representation of an object """
+    """get a unicode safe string representation of an object"""
     if isinstance(object, str):
         if encoding is None:
             return object
         else:
             return object.encode(encoding)
     if isinstance(object, tuple):
-        s = ['(']
+        s = ["("]
         for item in object:
             if isinstance(item, str):
                 s.append(item)
             else:
                 s.append(tostr(item))
-            s.append(', ')
-        s.append(')')
-        return ''.join(s)
+            s.append(", ")
+        s.append(")")
+        return "".join(s)
     if isinstance(object, list):
-        s = ['[']
+        s = ["["]
         for item in object:
             if isinstance(item, str):
                 s.append(item)
             else:
                 s.append(tostr(item))
-            s.append(', ')
-        s.append(']')
-        return ''.join(s)
+            s.append(", ")
+        s.append("]")
+        return "".join(s)
     if isinstance(object, dict):
-        s = ['{']
+        s = ["{"]
         for item in list(object.items()):
             if isinstance(item[0], str):
                 s.append(item[0])
             else:
                 s.append(tostr(item[0]))
-            s.append(' = ')
+            s.append(" = ")
             if isinstance(item[1], str):
                 s.append(item[1])
             else:
                 s.append(tostr(item[1]))
-            s.append(', ')
-        s.append('}')
-        return ''.join(s)
+            s.append(", ")
+        s.append("}")
+        return "".join(s)
     try:
         return str(object)
     except:
         return str(object)
-
 
 
 # Idea from 'http://lucumr.pocoo.org/2011/1/22/forwards-compatible-python'.
@@ -159,11 +172,12 @@ class UnicodeMixin(object):
         # For Python 3, __str__() and __unicode__() should be identical.
         __str__ = lambda x: x.__unicode__()
     else:
-        __str__ = lambda x: str(x).encode('utf-8')
+        __str__ = lambda x: str(x).encode("utf-8")
+
 
 #   Used instead of byte literals because they are not supported on Python
 # versions prior to 2.6.
-def byte_str(s='', encoding='utf-8', input_encoding='utf-8', errors='strict'):
+def byte_str(s="", encoding="utf-8", input_encoding="utf-8", errors="strict"):
     """
     Returns a bytestring version of 's', encoded as specified in 'encoding'.
 
@@ -177,6 +191,7 @@ def byte_str(s='', encoding='utf-8', input_encoding='utf-8', errors='strict'):
     if s and encoding != input_encoding:
         return s.decode(input_encoding, errors).encode(encoding, errors)
     return s
+
 
 # Class used to represent a byte string. Useful for asserting that correct
 # string types are being passed around where needed.

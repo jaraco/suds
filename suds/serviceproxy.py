@@ -73,7 +73,7 @@ class ServiceProxy(UnicodeMixin):
         return str(self.__client__)
 
     def __getattr__(self, name):
-        builtin = name.startswith('__') and name.endswith('__')
+        builtin = name.startswith("__") and name.endswith("__")
         if builtin:
             return self.__dict__[name]
         else:

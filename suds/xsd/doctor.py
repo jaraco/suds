@@ -24,6 +24,7 @@ from suds.sax.element import Element
 from suds.plugin import DocumentPlugin, DocumentContext
 
 from logging import getLogger
+
 log = getLogger(__name__)
 
 
@@ -31,6 +32,7 @@ class Doctor:
     """
     Schema Doctor.
     """
+
     def examine(self, root):
         """
         Examine and repair the schema (if necessary).
@@ -95,13 +97,13 @@ class TnsFilter:
         @param root: A schema root.
         @type root: L{Element}
         """
-        tns = root.get('targetNamespace')
+        tns = root.get("targetNamespace")
         if len(self.tns):
-            matched = ( tns in self.tns )
+            matched = tns in self.tns
         else:
             matched = 1
-        itself = ( ns == tns )
-        return ( matched and not itself )
+        itself = ns == tns
+        return matched and not itself
 
 
 class Import:
@@ -151,11 +153,11 @@ class Import:
             return
         if self.exists(root):
             return
-        node = Element('import', ns=self.xsdns)
-        node.set('namespace', self.ns)
+        node = Element("import", ns=self.xsdns)
+        node.set("namespace", self.ns)
         if self.location is not None:
-            node.set('schemaLocation', self.location)
-        log.debug('inserting: %s', node)
+            node.set("schemaLocation", self.location)
+        log.debug("inserting: %s", node)
         root.insert(node)
 
     def add(self, root):
@@ -164,11 +166,11 @@ class Import:
         @param root: A schema root.
         @type root: L{Element}
         """
-        node = Element('import', ns=self.xsdns)
-        node.set('namespace', self.ns)
+        node = Element("import", ns=self.xsdns)
+        node.set("namespace", self.ns)
         if self.location is not None:
-            node.set('schemaLocation', self.location)
-        log.debug('%s inserted', node)
+            node.set("schemaLocation", self.location)
+        log.debug("%s inserted", node)
         root.insert(node)
 
     def exists(self, root):
@@ -179,9 +181,9 @@ class Import:
         @type root: L{Element}
         """
         for node in root.children:
-            if node.name != 'import':
+            if node.name != "import":
                 continue
-            ns = node.get('namespace')
+            ns = node.get("namespace")
             if self.ns == ns:
                 return 1
         return 0
@@ -213,7 +215,7 @@ class ImportDoctor(Doctor, DocumentPlugin):
     def parsed(self, context):
         node = context.document
         # xsd root
-        if node.name == 'schema' and Namespace.xsd(node.namespace()):
+        if node.name == "schema" and Namespace.xsd(node.namespace()):
             self.examine(node)
             return
         # look deeper

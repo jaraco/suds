@@ -48,12 +48,13 @@ class Element(UnicodeMixin):
     """
 
     matcher = {
-        'eq': lambda a,b: a == b,
-        'startswith' : lambda a,b: a.startswith(b),
-        'endswith' : lambda a,b: a.endswith(b),
-        'contains' : lambda a,b: b in a}
+        "eq": lambda a, b: a == b,
+        "startswith": lambda a, b: a.startswith(b),
+        "endswith": lambda a, b: a.endswith(b),
+        "contains": lambda a, b: b in a,
+    }
 
-    specialprefixes = {Namespace.xmlns[0] : Namespace.xmlns[1]}
+    specialprefixes = {Namespace.xmlns[0]: Namespace.xmlns[1]}
 
     @classmethod
     def buildPath(self, parent, path):
@@ -67,7 +68,7 @@ class Element(UnicodeMixin):
         @return: The leaf node of I{path}.
         @rtype: L{Element}
         """
-        for tag in path.split('/'):
+        for tag in path.split("/"):
             child = parent.getChild(tag)
             if child is None:
                 child = Element(tag, parent)
@@ -92,7 +93,7 @@ class Element(UnicodeMixin):
             if isinstance(parent, Element):
                 self.parent = parent
             else:
-                raise Exception('parent (%s) not-valid', parent.__class__.__name__)
+                raise Exception("parent (%s) not-valid", parent.__class__.__name__)
         else:
             self.parent = None
         self.children = []
@@ -105,7 +106,7 @@ class Element(UnicodeMixin):
         @type name: basestring
         """
         if name is None:
-            raise Exception('name (%s) not-valid' % name)
+            raise Exception("name (%s) not-valid" % name)
         else:
             self.prefix, self.name = splitPrefix(name)
 
@@ -133,7 +134,7 @@ class Element(UnicodeMixin):
         """
         if self.prefix is None:
             return self.name
-        return '%s:%s' % (self.prefix, self.name)
+        return "%s:%s" % (self.prefix, self.name)
 
     def getRoot(self):
         """
@@ -317,7 +318,7 @@ class Element(UnicodeMixin):
                 self.attributes.append(child)
                 child.parent = self
                 continue
-            raise Exception('append %s not-valid' % child.__class__.__name__)
+            raise Exception("append %s not-valid" % child.__class__.__name__)
         return self
 
     def insert(self, objects, index=0):
@@ -337,7 +338,7 @@ class Element(UnicodeMixin):
                 self.children.insert(index, child)
                 child.parent = self
             else:
-                raise Exception('append %s not-valid' % child.__class__.__name__)
+                raise Exception("append %s not-valid" % child.__class__.__name__)
         return self
 
     def remove(self, child):
@@ -363,7 +364,7 @@ class Element(UnicodeMixin):
         @type content: L{Element} or [L{Element},]
         """
         if child not in self.children:
-            raise Exception('child not-found')
+            raise Exception("child not-found")
         index = self.children.index(child)
         self.remove(child)
         if not isinstance(content, (list, tuple)):
@@ -430,14 +431,14 @@ class Element(UnicodeMixin):
         """
         result = None
         node = self
-        for name in [p for p in path.split('/') if len(p) > 0]:
+        for name in [p for p in path.split("/") if len(p) > 0]:
             ns = None
             prefix, name = splitPrefix(name)
             if prefix is not None:
                 ns = node.resolvePrefix(prefix)
             result = node.getChild(name, ns)
             if result is None:
-                break;
+                break
             else:
                 node = result
         return result
@@ -451,7 +452,7 @@ class Element(UnicodeMixin):
         @return: The collection leaf nodes at the end of I{path}
         @rtype: [L{Element},...]
         """
-        parts = [p for p in path.split('/') if len(p) > 0]
+        parts = [p for p in path.split("/") if len(p) > 0]
         if len(parts) == 1:
             result = self.getChildren(path)
         else:
@@ -579,7 +580,7 @@ class Element(UnicodeMixin):
             return self.parent.findPrefix(uri, default)
         return default
 
-    def findPrefixes(self, uri, match='eq'):
+    def findPrefixes(self, uri, match="eq"):
         """
         Find all prefixes that have been mapped to a namespace URI.
         The local mapping is searched, then it walks up the tree until it
@@ -617,7 +618,7 @@ class Element(UnicodeMixin):
             c.promotePrefixes()
         if self.parent is None:
             return
-        for p,u in list(self.nsprefixes.items()):
+        for p, u in list(self.nsprefixes.items()):
             if p in self.parent.nsprefixes:
                 pu = self.parent.nsprefixes[p]
                 if pu == u:
@@ -667,8 +668,8 @@ class Element(UnicodeMixin):
         """
         noattrs = not len(self.attributes)
         nochildren = not len(self.children)
-        notext = ( self.text is None )
-        nocontent = ( nochildren and notext )
+        notext = self.text is None
+        nocontent = nochildren and notext
         if content:
             return nocontent
         return nocontent and noattrs
@@ -680,8 +681,8 @@ class Element(UnicodeMixin):
         @return: True if I{nil}, else False
         @rtype: boolean
         """
-        nilattr = self.getAttribute('nil', ns=Namespace.xsins)
-        return nilattr is not None and ( nilattr.getValue().lower() == 'true' )
+        nilattr = self.getAttribute("nil", ns=Namespace.xsins)
+        return nilattr is not None and (nilattr.getValue().lower() == "true")
 
     def setnil(self, flag=True):
         """
@@ -693,7 +694,7 @@ class Element(UnicodeMixin):
         @rtype: L{Element}
         """
         p, u = Namespace.xsins
-        name  = ':'.join((p, 'nil'))
+        name = ":".join((p, "nil"))
         self.set(name, str(flag).lower())
         self.addPrefix(p, u)
         if flag:
@@ -711,7 +712,7 @@ class Element(UnicodeMixin):
         if ns is None:
             return
         if not isinstance(ns, (tuple, list)):
-            raise Exception('namespace must be tuple')
+            raise Exception("namespace must be tuple")
         if ns[0] is None:
             self.expns = ns[1]
         else:
@@ -726,25 +727,25 @@ class Element(UnicodeMixin):
         @return: A I{pretty} string.
         @rtype: basestring
         """
-        tab = '%*s'%(indent*3,'')
+        tab = "%*s" % (indent * 3, "")
         result = []
-        result.append('%s<%s' % (tab, self.qname()))
+        result.append("%s<%s" % (tab, self.qname()))
         result.append(self.nsdeclarations())
         for a in [str(a) for a in self.attributes]:
-            result.append(' %s' % a)
+            result.append(" %s" % a)
         if self.isempty():
-            result.append('/>')
-            return ''.join(result)
-        result.append('>')
+            result.append("/>")
+            return "".join(result)
+        result.append(">")
         if self.hasText():
             result.append(self.text.escape())
         for c in self.children:
-            result.append('\n')
-            result.append(c.str(indent+1))
+            result.append("\n")
+            result.append(c.str(indent + 1))
         if len(self.children):
-            result.append('\n%s' % tab)
-        result.append('</%s>' % self.qname())
-        return ''.join(result)
+            result.append("\n%s" % tab)
+        result.append("</%s>" % self.qname())
+        return "".join(result)
 
     def plain(self):
         """
@@ -753,20 +754,20 @@ class Element(UnicodeMixin):
         @rtype: basestring
         """
         result = []
-        result.append('<%s' % self.qname())
+        result.append("<%s" % self.qname())
         result.append(self.nsdeclarations())
         for a in [str(a) for a in self.attributes]:
-            result.append(' %s' % a)
+            result.append(" %s" % a)
         if self.isempty():
-            result.append('/>')
-            return ''.join(result)
-        result.append('>')
+            result.append("/>")
+            return "".join(result)
+        result.append(">")
         if self.hasText():
             result.append(self.text.escape())
         for c in self.children:
             result.append(c.plain())
-        result.append('</%s>' % self.qname())
-        return ''.join(result)
+        result.append("</%s>" % self.qname())
+        return "".join(result)
 
     def nsdeclarations(self):
         """
@@ -786,13 +787,14 @@ class Element(UnicodeMixin):
                 d = ' xmlns="%s"' % self.expns
                 s.append(d)
         for item in list(self.nsprefixes.items()):
-            (p,u) = item
+            (p, u) = item
             if self.parent is not None:
                 ns = self.parent.resolvePrefix(p)
-                if ns[1] == u: continue
+                if ns[1] == u:
+                    continue
             d = ' xmlns:%s="%s"' % (p, u)
             s.append(d)
-        return ''.join(s)
+        return "".join(s)
 
     def match(self, name=None, ns=None):
         """
@@ -804,8 +806,8 @@ class Element(UnicodeMixin):
         @return: True if matched.
         @rtype: boolean
         """
-        byname = name is None or ( self.name == name )
-        byns = ns is None or ( self.namespace()[1] == ns[1] )
+        byname = name is None or (self.name == name)
+        byns = ns is None or (self.namespace()[1] == ns[1])
         return byname and byns
 
     def branch(self):
@@ -859,7 +861,7 @@ class Element(UnicodeMixin):
     def __childrenAtPath(self, parts):
         result = []
         node = self
-        last = len(parts)-1
+        last = len(parts) - 1
         ancestors = parts[:last]
         leaf = parts[last]
         for name in ancestors:
@@ -897,11 +899,10 @@ class Element(UnicodeMixin):
                 self.children.insert(index, value)
 
     def __eq__(self, rhs):
-        return isinstance(rhs, Element) and  \
-            self.match(rhs.name, rhs.namespace())
+        return isinstance(rhs, Element) and self.match(rhs.name, rhs.namespace())
 
     def __repr__(self):
-        return 'Element (prefix=%s, name=%s)' % (self.prefix, self.name)
+        return "Element (prefix=%s, name=%s)" % (self.prefix, self.name)
 
     def __unicode__(self):
         return self.str()
@@ -1013,7 +1014,7 @@ class PrefixNormalizer:
         prefixes = {}
         n = 0
         for u in self.namespaces:
-            p = 'ns%d' % n
+            p = "ns%d" % n
             prefixes[u] = p
             n += 1
         return prefixes
@@ -1063,13 +1064,14 @@ class PrefixNormalizer:
         @param a: An attribute.
         @type a: L{Attribute}
         """
-        p,name = splitPrefix(a.getValue())
-        if p is None: return
+        p, name = splitPrefix(a.getValue())
+        if p is None:
+            return
         ns = a.resolvePrefix(p)
         if self.permit(ns):
             u = ns[1]
             p = self.prefixes[u]
-            a.setValue(':'.join((p, name)))
+            a.setValue(":".join((p, name)))
 
     def refitMappings(self):
         """
@@ -1099,8 +1101,10 @@ class PrefixNormalizer:
         @return: True if to be skipped.
         @rtype: boolean
         """
-        return (ns is None or
-            ns == Namespace.default or
-            ns == Namespace.xsdns or
-            ns == Namespace.xsins or
-            ns == Namespace.xmlns)
+        return (
+            ns is None
+            or ns == Namespace.default
+            or ns == Namespace.xsdns
+            or ns == Namespace.xsins
+            or ns == Namespace.xmlns
+        )

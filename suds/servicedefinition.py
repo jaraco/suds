@@ -23,6 +23,7 @@ import suds.metrics as metrics
 from suds.sax import Namespace
 
 from logging import getLogger
+
 log = getLogger(__name__)
 
 
@@ -99,7 +100,8 @@ class ServiceDefinition(UnicodeMixin):
         @rtype: (port, [method])
         """
         for p in self.ports:
-            if p[0] == p: return p
+            if p[0] == p:
+                return p
         p = (port, [])
         self.ports.append(p)
         return p
@@ -108,17 +110,22 @@ class ServiceDefinition(UnicodeMixin):
         """Add prefixes for each namespace referenced by parameter types."""
         namespaces = []
         for l in (self.params, self.types):
-            for t,r in l:
+            for t, r in l:
                 ns = r.namespace()
-                if ns[1] is None: continue
-                if ns[1] in namespaces: continue
+                if ns[1] is None:
+                    continue
+                if ns[1] in namespaces:
+                    continue
                 if Namespace.xs(ns) or Namespace.xsd(ns):
                     continue
                 namespaces.append(ns[1])
-                if t == r: continue
+                if t == r:
+                    continue
                 ns = t.namespace()
-                if ns[1] is None: continue
-                if ns[1] in namespaces: continue
+                if ns[1] is None:
+                    continue
+                if ns[1] in namespaces:
+                    continue
                 namespaces.append(ns[1])
         i = 0
         namespaces.sort()
@@ -132,15 +139,18 @@ class ServiceDefinition(UnicodeMixin):
         for m in [p[1] for p in self.ports]:
             for p in [p[1] for p in m]:
                 for pd in p:
-                    if pd[1] in self.params: continue
+                    if pd[1] in self.params:
+                        continue
                     item = (pd[1], pd[1].resolve())
                     self.params.append(item)
 
     def publictypes(self):
         """Get all public types."""
         for t in list(self.wsdl.schema.types.values()):
-            if t in self.params: continue
-            if t in self.types: continue
+            if t in self.params:
+                continue
+            if t in self.types:
+                continue
             item = (t, t)
             self.types.append(item)
         self.types.sort(key=lambda x: x[0].name)
@@ -153,11 +163,11 @@ class ServiceDefinition(UnicodeMixin):
         """
         used = [ns[0] for ns in self.prefixes]
         used += [ns[0] for ns in list(self.wsdl.root.nsprefixes.items())]
-        for n in range(0,1024):
-            p = 'ns%d'%n
+        for n in range(0, 1024):
+            p = "ns%d" % n
             if p not in used:
                 return p
-        raise Exception('prefixes exhausted')
+        raise Exception("prefixes exhausted")
 
     def getprefix(self, u):
         """
@@ -168,10 +178,12 @@ class ServiceDefinition(UnicodeMixin):
         @rtype: (prefix, uri).
         """
         for ns in Namespace.all:
-            if u == ns[1]: return ns[0]
+            if u == ns[1]:
+                return ns[0]
         for ns in self.prefixes:
-            if u == ns[1]: return ns[0]
-        raise Exception('ns (%s) not mapped'  % u)
+            if u == ns[1]:
+                return ns[0]
+        raise Exception("ns (%s) not mapped" % u)
 
     def xlate(self, type):
         """
@@ -184,12 +196,12 @@ class ServiceDefinition(UnicodeMixin):
         resolved = type.resolve()
         name = resolved.name
         if type.multi_occurrence():
-            name += '[]'
+            name += "[]"
         ns = resolved.namespace()
         if ns[1] == self.wsdl.tns[1]:
             return name
         prefix = self.getprefix(ns[1])
-        return ':'.join((prefix, name))
+        return ":".join((prefix, name))
 
     def description(self):
         """
@@ -198,39 +210,38 @@ class ServiceDefinition(UnicodeMixin):
         @rtype: str
         """
         s = []
-        indent = (lambda n :  '\n%*s'%(n*3,' '))
+        indent = lambda n: "\n%*s" % (n * 3, " ")
         s.append('Service ( %s ) tns="%s"' % (self.service.name, self.wsdl.tns[1]))
         s.append(indent(1))
-        s.append('Prefixes (%d)' % len(self.prefixes))
+        s.append("Prefixes (%d)" % len(self.prefixes))
         for p in self.prefixes:
             s.append(indent(2))
             s.append('%s = "%s"' % p)
         s.append(indent(1))
-        s.append('Ports (%d):' % len(self.ports))
+        s.append("Ports (%d):" % len(self.ports))
         for p in self.ports:
             s.append(indent(2))
-            s.append('(%s)' % p[0].name)
+            s.append("(%s)" % p[0].name)
             s.append(indent(3))
-            s.append('Methods (%d):' % len(p[1]))
+            s.append("Methods (%d):" % len(p[1]))
             for m in p[1]:
                 sig = []
                 s.append(indent(4))
                 sig.append(m[0])
-                sig.append('(')
-                sig.append(', '.join("%s %s" % (self.xlate(p[1]), p[0]) for p
-                    in m[1]))
-                sig.append(')')
+                sig.append("(")
+                sig.append(", ".join("%s %s" % (self.xlate(p[1]), p[0]) for p in m[1]))
+                sig.append(")")
                 try:
-                    s.append(''.join(sig))
+                    s.append("".join(sig))
                 except:
                     pass
             s.append(indent(3))
-            s.append('Types (%d):' % len(self.types))
+            s.append("Types (%d):" % len(self.types))
             for t in self.types:
                 s.append(indent(4))
                 s.append(self.xlate(t[0]))
-        s.append('\n\n')
-        return ''.join(s)
+        s.append("\n\n")
+        return "".join(s)
 
     def __unicode__(self):
         try:

@@ -22,6 +22,7 @@ of suds plugins.
 from suds import *
 
 from logging import getLogger
+
 log = getLogger(__name__)
 
 
@@ -29,6 +30,7 @@ class Context(object):
     """
     Plugin context.
     """
+
     pass
 
 
@@ -38,6 +40,7 @@ class InitContext(Context):
     @ivar wsdl: The wsdl.
     @type wsdl: L{wsdl.Definitions}
     """
+
     pass
 
 
@@ -49,6 +52,7 @@ class DocumentContext(Context):
     @ivar document: Either the XML text or the B{parsed} document root.
     @type document: (str|L{sax.element.Element})
     """
+
     pass
 
 
@@ -60,6 +64,7 @@ class MessageContext(Context):
     @ivar reply: The reply.
     @type reply: (str|L{sax.element.Element}|object)
     """
+
     pass
 
 
@@ -67,6 +72,7 @@ class Plugin:
     """
     Plugin base.
     """
+
     pass
 
 
@@ -182,10 +188,10 @@ class PluginContainer:
     @type ctxclass: dict
     """
 
-    domains = {\
-        'init': (InitContext, InitPlugin),
-        'document': (DocumentContext, DocumentPlugin),
-        'message': (MessageContext, MessagePlugin ),
+    domains = {
+        "init": (InitContext, InitPlugin),
+        "document": (DocumentContext, DocumentPlugin),
+        "message": (MessageContext, MessagePlugin),
     }
 
     def __init__(self, plugins):
@@ -205,7 +211,7 @@ class PluginContainer:
                     plugins.append(p)
             return PluginDomain(ctx, plugins)
         else:
-            raise Exception('plugin domain (%s), invalid' % name)
+            raise Exception("plugin domain (%s), invalid" % name)
 
 
 class PluginDomain:

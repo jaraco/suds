@@ -24,7 +24,8 @@ from suds.bindings.binding import Binding, envns
 from suds.sax.element import Element
 
 
-encns = ('SOAP-ENC', 'http://schemas.xmlsoap.org/soap/encoding/')
+encns = ("SOAP-ENC", "http://schemas.xmlsoap.org/soap/encoding/")
+
 
 class RPC(Binding):
     """
@@ -37,8 +38,9 @@ class RPC(Binding):
     def envelope(self, header, body):
         env = Binding.envelope(self, header, body)
         env.addPrefix(encns[0], encns[1])
-        env.set('%s:encodingStyle' % envns[0],
-                'http://schemas.xmlsoap.org/soap/encoding/')
+        env.set(
+            "%s:encodingStyle" % envns[0], "http://schemas.xmlsoap.org/soap/encoding/"
+        )
         return env
 
     def bodycontent(self, method, args, kwargs):
@@ -69,7 +71,7 @@ class RPC(Binding):
         """
         ns = method.soap.input.body.namespace
         if ns[0] is None:
-            ns = ('ns0', ns[1])
+            ns = ("ns0", ns[1])
         method = Element(method.name, ns=ns)
         return method
 

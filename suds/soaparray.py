@@ -39,20 +39,21 @@ class Attribute(SXAttribute):
         @type aty: The value of wsdl:arrayType.
         """
         SXAttribute.__init__(self, schema, root)
-        if aty.endswith('[]'):
+        if aty.endswith("[]"):
             self.aty = aty[:-2]
         else:
             self.aty = aty
 
     def autoqualified(self):
         aqs = SXAttribute.autoqualified(self)
-        aqs.append('aty')
+        aqs.append("aty")
         return aqs
 
     def description(self):
         d = SXAttribute.description(self)
-        d = d+('aty',)
+        d = d + ("aty",)
         return d
+
 
 #
 # Builder function, only builds Attribute when arrayType
@@ -60,12 +61,13 @@ class Attribute(SXAttribute):
 #
 def __fn(x, y):
     ns = (None, "http://schemas.xmlsoap.org/wsdl/")
-    aty = y.get('arrayType', ns=ns)
+    aty = y.get("arrayType", ns=ns)
     if aty is None:
         return SXAttribute(x, y)
     return Attribute(x, y, aty)
 
+
 #
 # Remap <xs:attribute/> tags to __fn() builder.
 #
-SXFactory.maptag('attribute', __fn)
+SXFactory.maptag("attribute", __fn)

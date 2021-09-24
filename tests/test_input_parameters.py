@@ -37,6 +37,7 @@ operation's input parameters correctly.
 
 if __name__ == "__main__":
     from . import __init__
+
     __init__.runUsingPyTest(globals())
 
 
@@ -63,7 +64,8 @@ class XSDType:
 
 # Test data shared between different tests in this module.
 
-choice_choice = XSDType("""\
+choice_choice = XSDType(
+    """\
     <xsd:complexType>
       <xsd:sequence>
         <xsd:choice>
@@ -75,17 +77,23 @@ choice_choice = XSDType("""\
           <xsd:element name="anInteger2" type="xsd:integer" minOccurs="0" />
         </xsd:choice>
       </xsd:sequence>
-    </xsd:complexType>""", [
-    "complex_type", [
-        "sequence", [
-            "choice_1", [
-                Element("aString1"),
-                Element("anInteger1")],
-            "choice_2", [
-                Element("aString2"),
-                Element("anInteger2")]]]])
+    </xsd:complexType>""",
+    [
+        "complex_type",
+        [
+            "sequence",
+            [
+                "choice_1",
+                [Element("aString1"), Element("anInteger1")],
+                "choice_2",
+                [Element("aString2"), Element("anInteger2")],
+            ],
+        ],
+    ],
+)
 
-choice_element_choice = XSDType("""\
+choice_element_choice = XSDType(
+    """\
     <xsd:complexType>
       <xsd:sequence>
         <xsd:choice>
@@ -98,30 +106,35 @@ choice_element_choice = XSDType("""\
           <xsd:element name="anInteger2" type="xsd:integer" minOccurs="0" />
         </xsd:choice>
       </xsd:sequence>
-    </xsd:complexType>""", [
-    "complex_type", [
-        "sequence", [
-            "choice_1", [
-                Element("aString1"),
-                Element("anInteger1")],
-            Element("separator"),
-            "choice_2", [
-                Element("aString2"),
-                Element("anInteger2")]]]])
+    </xsd:complexType>""",
+    [
+        "complex_type",
+        [
+            "sequence",
+            [
+                "choice_1",
+                [Element("aString1"), Element("anInteger1")],
+                Element("separator"),
+                "choice_2",
+                [Element("aString2"), Element("anInteger2")],
+            ],
+        ],
+    ],
+)
 
-choice_simple_nonoptional = XSDType("""\
+choice_simple_nonoptional = XSDType(
+    """\
     <xsd:complexType>
       <xsd:choice>
         <xsd:element name="aString" type="xsd:string" />
         <xsd:element name="anInteger" type="xsd:integer" />
       </xsd:choice>
-    </xsd:complexType>""", [
-    "complex_type", [
-        "choice", [
-            Element("aString"),
-            Element("anInteger")]]])
+    </xsd:complexType>""",
+    ["complex_type", ["choice", [Element("aString"), Element("anInteger")]]],
+)
 
-choice_with_element_and_two_element_sequence = XSDType("""\
+choice_with_element_and_two_element_sequence = XSDType(
+    """\
     <xsd:complexType>
       <xsd:choice>
         <xsd:element name="a" type="xsd:integer" />
@@ -130,22 +143,23 @@ choice_with_element_and_two_element_sequence = XSDType("""\
           <xsd:element name="b2" type="xsd:integer" />
         </xsd:sequence>
       </xsd:choice>
-    </xsd:complexType>""", [
-    "complex_type", [
-        "choice", [
-            Element("a"),
-            "sequence", [
-                Element("b1"),
-                Element("b2")]]]])
+    </xsd:complexType>""",
+    [
+        "complex_type",
+        ["choice", [Element("a"), "sequence", [Element("b1"), Element("b2")]]],
+    ],
+)
 
-empty_sequence = XSDType("""\
+empty_sequence = XSDType(
+    """\
     <xsd:complexType>
       <xsd:sequence />
-    </xsd:complexType>""", [
-    "complex_type", [
-        "sequence"]])
+    </xsd:complexType>""",
+    ["complex_type", ["sequence"]],
+)
 
-sequence_choice_with_element_and_two_element_sequence = XSDType("""\
+sequence_choice_with_element_and_two_element_sequence = XSDType(
+    """\
     <xsd:complexType>
       <xsd:sequence>
         <xsd:choice>
@@ -156,16 +170,18 @@ sequence_choice_with_element_and_two_element_sequence = XSDType("""\
           </xsd:sequence>
         </xsd:choice>
       </xsd:sequence>
-    </xsd:complexType>""", [
-    "complex_type", [
-        "sequence_1", [
-            "choice", [
-                Element("a"),
-                "sequence_2", [
-                    Element("b1"),
-                    Element("b2")]]]]])
+    </xsd:complexType>""",
+    [
+        "complex_type",
+        [
+            "sequence_1",
+            ["choice", [Element("a"), "sequence_2", [Element("b1"), Element("b2")]]],
+        ],
+    ],
+)
 
-sequence_with_five_elements = XSDType("""\
+sequence_with_five_elements = XSDType(
+    """\
     <xsd:complexType>
       <xsd:sequence>
         <xsd:element name="p1" type="xsd:string" />
@@ -174,36 +190,36 @@ sequence_with_five_elements = XSDType("""\
         <xsd:element name="p4" type="xsd:integer" />
         <xsd:element name="p5" type="xsd:string" />
       </xsd:sequence>
-    </xsd:complexType>""", [
-    "complex_type", [
-        "sequence", [
-            Element("p1"),
-            Element("p2"),
-            Element("p3"),
-            Element("p4"),
-            Element("p5")]]])
+    </xsd:complexType>""",
+    [
+        "complex_type",
+        [
+            "sequence",
+            [Element("p1"), Element("p2"), Element("p3"), Element("p4"), Element("p5")],
+        ],
+    ],
+)
 
-sequence_with_one_element = XSDType("""\
+sequence_with_one_element = XSDType(
+    """\
     <xsd:complexType>
       <xsd:sequence>
         <xsd:element name="param" type="xsd:integer" />
       </xsd:sequence>
-    </xsd:complexType>""", [
-    "complex_type", [
-        "sequence", [
-            Element("param")]]])
+    </xsd:complexType>""",
+    ["complex_type", ["sequence", [Element("param")]]],
+)
 
-sequence_with_two_elements = XSDType("""\
+sequence_with_two_elements = XSDType(
+    """\
     <xsd:complexType>
       <xsd:sequence>
         <xsd:element name="aString" type="xsd:string" />
         <xsd:element name="anInteger" type="xsd:integer" />
       </xsd:sequence>
-    </xsd:complexType>""", [
-    "complex_type", [
-        "sequence", [
-            Element("aString"),
-            Element("anInteger")]]])
+    </xsd:complexType>""",
+    ["complex_type", ["sequence", [Element("aString"), Element("anInteger")]]],
+)
 
 
 class TestUnsupportedParameterDefinitions:
@@ -269,65 +285,83 @@ class TestUnsupportedParameterDefinitions:
         client = tests.client_from_wsdl(wsdl, nosend=True)
         self.service = client.service
 
-    @pytest.mark.parametrize("test_args_required", (
-        pytest.param(True, marks=pytest.mark.xfail(reason="empty choice member items not supported")),
-        False))
+    @pytest.mark.parametrize(
+        "test_args_required",
+        (
+            pytest.param(
+                True,
+                marks=pytest.mark.xfail(
+                    reason="empty choice member items not supported"
+                ),
+            ),
+            False,
+        ),
+    )
     def test_choice_containing_an_empty_sequence(self, test_args_required):
         """
         Test reporting extra input parameters passed to a function taking a
         choice parameter group containing an empty sequence subgroup.
 
         """
-        self.init_function_params("""\
+        self.init_function_params(
+            """\
           <xsd:complexType>
             <xsd:choice>
               <xsd:element name="a" type="xsd:integer" />
               <xsd:sequence>
               </xsd:sequence>
             </xsd:choice>
-          </xsd:complexType>""")
+          </xsd:complexType>"""
+        )
 
         expected = "f() takes 0 to 1 positional arguments but 3 were given"
         if not test_args_required:
-            expected = [expected,
-                "f() takes 1 positional argument but 3 were given"]
+            expected = [expected, "f() takes 1 positional argument but 3 were given"]
         self.expect_error(expected, 1, None, None)
 
-    @pytest.mark.parametrize("choice", (
-        # Explicitly marked as optional and containing only non-optional
-        # elements.
-        pytest.param(
-        """\
+    @pytest.mark.parametrize(
+        "choice",
+        (
+            # Explicitly marked as optional and containing only non-optional
+            # elements.
+            pytest.param(
+                """\
           <xsd:complexType>
             <xsd:choice minOccurs="0">
               <xsd:element name="aString" type="xsd:string" />
               <xsd:element name="anInteger" type="xsd:integer" />
             </xsd:choice>
-          </xsd:complexType>""", marks=pytest.mark.xfail(reason="suds does not yet support minOccurs/"
-            "maxOccurs attributes on all/choice/sequence order indicators")),
-        # Explicitly marked as optional and containing at least one
-        # non-optional element.
-        """\
+          </xsd:complexType>""",
+                marks=pytest.mark.xfail(
+                    reason="suds does not yet support minOccurs/"
+                    "maxOccurs attributes on all/choice/sequence order indicators"
+                ),
+            ),
+            # Explicitly marked as optional and containing at least one
+            # non-optional element.
+            """\
           <xsd:complexType>
             <xsd:choice minOccurs="0">
               <xsd:element name="aString" type="xsd:string" minOccurs="0" />
               <xsd:element name="anInteger" type="xsd:integer" />
             </xsd:choice>
           </xsd:complexType>""",
-        """\
+            """\
           <xsd:complexType>
             <xsd:choice minOccurs="0">
               <xsd:element name="aString" type="xsd:string" />
               <xsd:element name="anInteger" type="xsd:integer" minOccurs="0" />
             </xsd:choice>
           </xsd:complexType>""",
-        """\
+            """\
           <xsd:complexType>
             <xsd:choice minOccurs="0">
               <xsd:element name="aString" type="xsd:string" minOccurs="0" />
               <xsd:element name="anInteger" type="xsd:integer" minOccurs="0" />
             </xsd:choice>
-          </xsd:complexType>"""))
+          </xsd:complexType>""",
+        ),
+    )
     def test_choice_explicitly_marked_as_optional(self, choice):
         """
         Test reporting extra input parameters passed to a function taking a
@@ -346,7 +380,8 @@ def test_builtin_typed_element_parameter(part_name):
     a built-in typed element.
 
     """
-    wsdl = suds.byte_str("""\
+    wsdl = suds.byte_str(
+        """\
 <?xml version='1.0' encoding='UTF-8'?>
 <wsdl:definitions targetNamespace="my-namespace"
 xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
@@ -381,7 +416,9 @@ xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/">
       <soap:address location="unga-bunga-location" />
     </wsdl:port>
   </wsdl:service>
-</wsdl:definitions>""" % (part_name,))
+</wsdl:definitions>"""
+        % (part_name,)
+    )
     client = tests.client_from_wsdl(wsdl, nosend=True)
 
     # Collect references to required WSDL model content.
@@ -417,18 +454,17 @@ def test_explicitly_wrapped_parameter(part_name):
     _expect_params(param_defs, [("Wrapper", wrapper)])
 
 
-@pytest.mark.parametrize("param_names", (
-    [],
-    ["parameters"],
-    ["pipi"],
-    ["fifi", "la", "fuff"]))
+@pytest.mark.parametrize(
+    "param_names", ([], ["parameters"], ["pipi"], ["fifi", "la", "fuff"])
+)
 def test_typed_parameters(param_names):
     """
     Test correctly recognizing web service operation input structure defined
     with 0 or more typed input message part parameters.
 
     """
-    wsdl = ["""\
+    wsdl = [
+        """\
 <?xml version='1.0' encoding='UTF-8'?>
 <wsdl:definitions targetNamespace="my-namespace"
 xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
@@ -446,11 +482,13 @@ xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/">
       </xsd:complexType>
     </xsd:schema>
   </wsdl:types>
-  <wsdl:message name="fRequestMessage">"""]
+  <wsdl:message name="fRequestMessage">"""
+    ]
     for x in param_names:
         part_def = '\n    <wsdl:part name="%s" type="ns:MyType" />' % (x,)
         wsdl.append(part_def)
-    wsdl.append("""
+    wsdl.append(
+        """
   </wsdl:message>
   <wsdl:portType name="dummyPortType">
     <wsdl:operation name="f">
@@ -470,7 +508,8 @@ xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/">
       <soap:address location="unga-bunga-location" />
     </wsdl:port>
   </wsdl:service>
-</wsdl:definitions>""")
+</wsdl:definitions>"""
+    )
     wsdl = suds.byte_str("".join(wsdl))
     client = tests.client_from_wsdl(wsdl, nosend=True)
 
@@ -484,22 +523,27 @@ xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/">
     # Construct expected parameter definitions.
     expected_param_defs = [
         (param_name, [suds.bindings.binding.PartElement, param_name, my_type])
-        for param_name in param_names]
+        for param_name in param_names
+    ]
 
     param_defs = binding.param_defs(method)
     _expect_params(param_defs, expected_param_defs)
 
 
-@pytest.mark.parametrize("xsd_type", (
-    choice_choice,
-    choice_element_choice,
-    choice_simple_nonoptional,
-    choice_with_element_and_two_element_sequence,
-    empty_sequence,
-    sequence_choice_with_element_and_two_element_sequence,
-    sequence_with_five_elements,
-    sequence_with_one_element,
-    sequence_with_two_elements))
+@pytest.mark.parametrize(
+    "xsd_type",
+    (
+        choice_choice,
+        choice_element_choice,
+        choice_simple_nonoptional,
+        choice_with_element_and_two_element_sequence,
+        empty_sequence,
+        sequence_choice_with_element_and_two_element_sequence,
+        sequence_with_five_elements,
+        sequence_with_one_element,
+        sequence_with_two_elements,
+    ),
+)
 def test_unwrapped_parameter(xsd_type):
     """Test recognizing unwrapped web service operation input structures."""
     input_schema = sequence_choice_with_element_and_two_element_sequence.xsd
@@ -595,8 +639,7 @@ def _parse_schema_model(root, schema_model_map):
     return param_defs
 
 
-def _parse_schema_model_r(schema_items, param_defs, ancestry, parent,
-        schema_model_map):
+def _parse_schema_model_r(schema_items, param_defs, ancestry, parent, schema_model_map):
     """Recursive implementation detail for _parse_schema_model()."""
     prev = None
     ancestry = list(ancestry)
@@ -637,7 +680,8 @@ def _unwrappable_wsdl(part_name, param_schema):
     'param_schema' argument.
 
     """
-    return suds.byte_str("""\
+    return suds.byte_str(
+        """\
 <?xml version='1.0' encoding='UTF-8'?>
 <wsdl:definitions targetNamespace="my-namespace"
 xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
@@ -674,4 +718,6 @@ xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/">
       <soap:address location="unga-bunga-location" />
     </wsdl:port>
   </wsdl:service>
-</wsdl:definitions>""" % {"param_schema":param_schema, "part_name":part_name})
+</wsdl:definitions>"""
+        % {"param_schema": param_schema, "part_name": part_name}
+    )

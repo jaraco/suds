@@ -31,6 +31,7 @@ class XString(XBuiltin):
     """
     Represents an (xsd) <xs:string/> node
     """
+
     pass
 
 
@@ -56,8 +57,10 @@ class XBoolean(XBuiltin):
     Represents an (xsd) boolean builtin type.
     """
 
-    translation = ({'1':True, 'true':True, '0':False, 'false':False},
-        {True:'true', 1:'true', False:'false', 0:'false'})
+    translation = (
+        {"1": True, "true": True, "0": False, "false": False},
+        {True: "true", 1: "true", False: "false", 0: "false"},
+    )
 
     @staticmethod
     def translate(value, topython=True):
@@ -168,63 +171,62 @@ class XDateTime(XBuiltin):
 
 class Factory:
 
-    tags =\
-    {
+    tags = {
         # any
-        'anyType' : XAny,
+        "anyType": XAny,
         # strings
-        'string' : XString,
-        'normalizedString' : XString,
-        'ID' : XString,
-        'Name' : XString,
-        'QName' : XString,
-        'NCName' : XString,
-        'anySimpleType' : XString,
-        'anyURI' : XString,
-        'NOTATION' : XString,
-        'token' : XString,
-        'language' : XString,
-        'IDREFS' : XString,
-        'ENTITIES' : XString,
-        'IDREF' : XString,
-        'ENTITY' : XString,
-        'NMTOKEN' : XString,
-        'NMTOKENS' : XString,
+        "string": XString,
+        "normalizedString": XString,
+        "ID": XString,
+        "Name": XString,
+        "QName": XString,
+        "NCName": XString,
+        "anySimpleType": XString,
+        "anyURI": XString,
+        "NOTATION": XString,
+        "token": XString,
+        "language": XString,
+        "IDREFS": XString,
+        "ENTITIES": XString,
+        "IDREF": XString,
+        "ENTITY": XString,
+        "NMTOKEN": XString,
+        "NMTOKENS": XString,
         # binary
-        'hexBinary' : XString,
-        'base64Binary' : XString,
+        "hexBinary": XString,
+        "base64Binary": XString,
         # integers
-        'int' : XInteger,
-        'integer' : XInteger,
-        'unsignedInt' : XInteger,
-        'positiveInteger' : XInteger,
-        'negativeInteger' : XInteger,
-        'nonPositiveInteger' : XInteger,
-        'nonNegativeInteger' : XInteger,
+        "int": XInteger,
+        "integer": XInteger,
+        "unsignedInt": XInteger,
+        "positiveInteger": XInteger,
+        "negativeInteger": XInteger,
+        "nonPositiveInteger": XInteger,
+        "nonNegativeInteger": XInteger,
         # longs
-        'long' : XLong,
-        'unsignedLong' : XLong,
+        "long": XLong,
+        "unsignedLong": XLong,
         # shorts
-        'short' : XInteger,
-        'unsignedShort' : XInteger,
-        'byte' : XInteger,
-        'unsignedByte' : XInteger,
+        "short": XInteger,
+        "unsignedShort": XInteger,
+        "byte": XInteger,
+        "unsignedByte": XInteger,
         # floats
-        'float' : XFloat,
-        'double' : XFloat,
-        'decimal' : XFloat,
+        "float": XFloat,
+        "double": XFloat,
+        "decimal": XFloat,
         # dates & times
-        'date' : XDate,
-        'time' : XTime,
-        'dateTime': XDateTime,
-        'duration': XString,
-        'gYearMonth' : XString,
-        'gYear' : XString,
-        'gMonthDay' : XString,
-        'gDay' : XString,
-        'gMonth' : XString,
+        "date": XDate,
+        "time": XTime,
+        "dateTime": XDateTime,
+        "duration": XString,
+        "gYearMonth": XString,
+        "gYear": XString,
+        "gMonthDay": XString,
+        "gDay": XString,
+        "gMonth": XString,
         # boolean
-        'boolean' : XBoolean,
+        "boolean": XBoolean,
     }
 
     @classmethod

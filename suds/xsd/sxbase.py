@@ -24,6 +24,7 @@ from suds.sax.element import Element
 from suds.sax import Namespace
 
 from logging import getLogger
+
 log = getLogger(__name__)
 
 
@@ -90,15 +91,15 @@ class SchemaObject(UnicodeMixin):
         self.schema = schema
         self.root = root
         self.id = objid(self)
-        self.name = root.get('name')
+        self.name = root.get("name")
         self.qname = (self.name, schema.tns[1])
-        self.min = root.get('minOccurs')
-        self.max = root.get('maxOccurs')
-        self.type = root.get('type')
-        self.ref = root.get('ref')
+        self.min = root.get("minOccurs")
+        self.max = root.get("maxOccurs")
+        self.type = root.get("type")
+        self.ref = root.get("ref")
         self.form_qualified = schema.form_qualified
         self.nillable = False
-        self.default = root.get('default')
+        self.default = root.get("default")
         self.rawchildren = []
 
     def attributes(self, filter=Filter()):
@@ -182,7 +183,7 @@ class SchemaObject(UnicodeMixin):
             return False
         if max.isdigit():
             return int(max) > 1
-        return max == 'unbounded'
+        return max == "unbounded"
 
     def optional(self):
         """
@@ -190,7 +191,7 @@ class SchemaObject(UnicodeMixin):
         @return: True if optional, else False
         @rtype: boolean
         """
-        return self.min == '0'
+        return self.min == "0"
 
     def required(self):
         """
@@ -351,7 +352,7 @@ class SchemaObject(UnicodeMixin):
         @return: A list of attibute names.
         @rtype: list
         """
-        return ['type', 'ref']
+        return ["type", "ref"]
 
     def qualify(self):
         """
@@ -379,14 +380,16 @@ class SchemaObject(UnicodeMixin):
         Merge another object as needed.
         """
         other.qualify()
-        for n in ('name',
-                  'qname',
-                  'min',
-                  'max',
-                  'default',
-                  'type',
-                  'nillable',
-                  'form_qualified'):
+        for n in (
+            "name",
+            "qname",
+            "min",
+            "max",
+            "default",
+            "type",
+            "nillable",
+            "form_qualified",
+        ):
             if getattr(self, n) is not None:
                 continue
             v = getattr(other, n)
@@ -430,10 +433,10 @@ class SchemaObject(UnicodeMixin):
         if history is None:
             history = []
         if self in history:
-            return '%s ...' % Repr(self)
+            return "%s ..." % Repr(self)
         history.append(self)
-        tab = '%*s'%(indent*3, '')
-        result = ['%s<%s' % (tab, self.id)]
+        tab = "%*s" % (indent * 3, "")
+        result = ["%s<%s" % (tab, self.id)]
         for n in self.description():
             if not hasattr(self, n):
                 continue
@@ -442,17 +445,17 @@ class SchemaObject(UnicodeMixin):
                 continue
             result.append(' %s="%s"' % (n, v))
         if len(self):
-            result.append('>')
+            result.append(">")
             for c in self.rawchildren:
-                result.append('\n')
-                result.append(c.str(indent+1, history[:]))
+                result.append("\n")
+                result.append(c.str(indent + 1, history[:]))
                 if c.isattr():
-                    result.append('@')
-            result.append('\n%s' % tab)
-            result.append('</%s>' % self.__class__.__name__)
+                    result.append("@")
+            result.append("\n%s" % tab)
+            result.append("</%s>" % self.__class__.__name__)
         else:
-            result.append(' />')
-        return ''.join(result)
+            result.append(" />")
+        return "".join(result)
 
     def description(self):
         """
@@ -467,7 +470,7 @@ class SchemaObject(UnicodeMixin):
 
     def __repr__(self):
         s = []
-        s.append('<%s' % self.id)
+        s.append("<%s" % self.id)
         for n in self.description():
             if not hasattr(self, n):
                 continue
@@ -475,12 +478,13 @@ class SchemaObject(UnicodeMixin):
             if v is None:
                 continue
             s.append(' %s="%s"' % (n, v))
-        s.append(' />')
-        return ''.join(s)
+        s.append(" />")
+        return "".join(s)
 
     def __len__(self):
         n = 0
-        for x in self: n += 1
+        for x in self:
+            n += 1
         return n
 
     def __iter__(self):
@@ -509,7 +513,7 @@ class Iter:
     """
 
     class Frame:
-        """ A content iterator frame. """
+        """A content iterator frame."""
 
         def __init__(self, sx):
             """
@@ -621,6 +625,7 @@ class Content(SchemaObject):
     This class represents those schema objects that represent
     real XML document content.
     """
+
     pass
 
 
@@ -633,6 +638,7 @@ class NodeFinder:
     @ivar limit: Limit the number of matches.  0=unlimited.
     @type limit: int
     """
+
     def __init__(self, matcher, limit=0):
         """
         @param matcher: An object used as criteria for match.

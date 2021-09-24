@@ -20,6 +20,7 @@ Provides XML I{special character} encoder classes.
 
 import re
 
+
 class Encoder:
     """
     An XML special character encoder/decoder.
@@ -31,12 +32,21 @@ class Encoder:
     @type special: [char]
     """
 
-    encodings = \
-        (( '&(?!(amp|lt|gt|quot|apos);)', '&amp;' ),( '<', '&lt;' ),( '>', '&gt;' ),( '"', '&quot;' ),("'", '&apos;' ))
-    decodings = \
-        (( '&lt;', '<' ),( '&gt;', '>' ),( '&quot;', '"' ),( '&apos;', "'" ),( '&amp;', '&' ))
-    special = \
-        ('&', '<', '>', '"', "'")
+    encodings = (
+        ("&(?!(amp|lt|gt|quot|apos);)", "&amp;"),
+        ("<", "&lt;"),
+        (">", "&gt;"),
+        ('"', "&quot;"),
+        ("'", "&apos;"),
+    )
+    decodings = (
+        ("&lt;", "<"),
+        ("&gt;", ">"),
+        ("&quot;", '"'),
+        ("&apos;", "'"),
+        ("&amp;", "&"),
+    )
+    special = ("&", "<", ">", '"', "'")
 
     def needsEncoding(self, s):
         """
@@ -73,7 +83,7 @@ class Encoder:
         @return: The decoded string.
         @rtype: str
         """
-        if isinstance(s, str) and '&' in s:
+        if isinstance(s, str) and "&" in s:
             for x in self.decodings:
                 s = s.replace(x[0], x[1])
         return s

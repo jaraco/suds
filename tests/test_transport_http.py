@@ -24,6 +24,7 @@ Implemented using the 'pytest' testing framework.
 
 if __name__ == "__main__":
     from . import __init__
+
     __init__.runUsingPyTest(globals())
 
 
@@ -41,12 +42,14 @@ import urllib.request, urllib.error, urllib.parse
 
 class MyException(Exception):
     """Local exception used in this test module."""
+
     pass
 
 
 def test_authenticated_http():
-    t = suds.transport.http.HttpAuthenticated(username="Habul AfuFa",
-        password="preCious")
+    t = suds.transport.http.HttpAuthenticated(
+        username="Habul AfuFa", password="preCious"
+    )
     assert t.credentials() == ("Habul AfuFa", "preCious")
 
     t = suds.transport.http.HttpAuthenticated(username="macro")
@@ -70,8 +73,7 @@ def test_authenticated_http_add_credentials_to_request():
 
     username = "Habul Afufa"
     password = "preCious"
-    t = suds.transport.http.HttpAuthenticated(username=username,
-        password=password)
+    t = suds.transport.http.HttpAuthenticated(username=username, password=password)
     r = MockRequest()
     t.addcredentials(r)
     _check_Authorization_header(r, username, password)
@@ -79,43 +81,51 @@ def test_authenticated_http_add_credentials_to_request():
     #   Regression test: Extremely long username & password combinations must
     # not cause suds to add additional newlines in the constructed
     # 'Authorization' HTTP header.
-    username = ("An Extremely Long Username that could be usable only to "
-        "Extremely Important People whilst on Extremely Important Missions.")
-    password = ("An Extremely Long Password that could be usable only to "
+    username = (
+        "An Extremely Long Username that could be usable only to "
+        "Extremely Important People whilst on Extremely Important Missions."
+    )
+    password = (
+        "An Extremely Long Password that could be usable only to "
         "Extremely Important People whilst on Extremely Important Missions. "
         "And some extra 'funny' characters to improve security: "
         "!@#$%^&*():|}|{{.\nEven\nSome\nNewLines\n"
-        "  and spaces at the start of a new line.   ")
-    t = suds.transport.http.HttpAuthenticated(username=username,
-        password=password)
+        "  and spaces at the start of a new line.   "
+    )
+    t = suds.transport.http.HttpAuthenticated(username=username, password=password)
     r = MockRequest()
     t.addcredentials(r)
     _check_Authorization_header(r, username, password)
 
 
-@pytest.mark.parametrize("url", (
-    "http://my little URL",
-    "https://my little URL",
-    "xxx://my little URL",
-    "xxx:my little URL",
-    "xxx:"))
+@pytest.mark.parametrize(
+    "url",
+    (
+        "http://my little URL",
+        "https://my little URL",
+        "xxx://my little URL",
+        "xxx:my little URL",
+        "xxx:",
+    ),
+)
 def test_http_request_URL(url):
     """Make sure suds makes a HTTP request targeted at an expected URL."""
+
     class MockURLOpener:
         def open(self, request, timeout=None):
             assert request.get_full_url() == url
             raise MyException
+
     transport = suds.transport.http.HttpTransport()
     transport.urlopener = MockURLOpener()
     store = suds.store.DocumentStore(wsdl=_wsdl_with_no_input_data(url))
-    client = suds.client.Client("suds://wsdl", cache=None, documentStore=store,
-        transport=transport)
+    client = suds.client.Client(
+        "suds://wsdl", cache=None, documentStore=store, transport=transport
+    )
     pytest.raises(MyException, client.service.f)
 
 
-@pytest.mark.parametrize("url", (
-    "my no-protocol URL",
-    ":my no-protocol URL"))
+@pytest.mark.parametrize("url", ("my no-protocol URL", ":my no-protocol URL"))
 def test_http_request_URL_with_a_missing_protocol_identifier(url):
     """
     Test suds reporting URLs with a missing protocol identifier.
@@ -124,14 +134,17 @@ def test_http_request_URL_with_a_missing_protocol_identifier(url):
     earlier Python versions.
 
     """
+
     class MockURLOpener:
         def open(self, request, timeout=None):
             raise MyException
+
     transport = suds.transport.http.HttpTransport()
     transport.urlopener = MockURLOpener()
     store = suds.store.DocumentStore(wsdl=_wsdl_with_no_input_data(url))
-    client = suds.client.Client("suds://wsdl", cache=None, documentStore=store,
-        transport=transport)
+    client = suds.client.Client(
+        "suds://wsdl", cache=None, documentStore=store, transport=transport
+    )
     exceptionClass = ValueError
     if sys.version_info < (3, 0):
         exceptionClass = MyException
@@ -166,13 +179,16 @@ def test_sending_unicode_data(monkeypatch):
     suds attempt to read back data from the network.
 
     """
+
     def callOnce(f):
         """Method decorator making sure its function only gets called once."""
+
         def wrapper(self, *args, **kwargs):
             fTag = "_%s__%s_called" % (self.__class__.__name__, f.__name__)
             assert not hasattr(self, fTag)
             setattr(self, fTag, True)
             return f(self, *args, **kwargs)
+
         return wrapper
 
     class Mocker:
@@ -181,11 +197,13 @@ def test_sending_unicode_data(monkeypatch):
             self.expectedPort = expectedPort
             self.sentData = suds.byte_str()
             self.hostAddress = object()
+
         @callOnce
         def getaddrinfo(self, host, port, *args, **kwargs):
             assert host == self.expectedHost
             assert port == self.expectedPort
             return [(None, None, None, None, self.hostAddress)]
+
         @callOnce
         def socket(self, *args, **kwargs):
             self.socket = MockSocket(self)
@@ -195,30 +213,38 @@ def test_sending_unicode_data(monkeypatch):
         @callOnce
         def readline(self, *args, **kwargs):
             raise MyException
+
         def close(self):
             pass
+
         def flush(self):
             pass
 
     class MockSocket:
         def __init__(self, mocker):
             self.__mocker = mocker
+
         @callOnce
         def connect(self, address):
             assert address is self.__mocker.hostAddress
+
         @callOnce
         def makefile(self, *args, **kwargs):
             return MockSocketReader()
+
         def sendall(self, data):
             # Python 2.4 urllib implementation calls this function twice - once
             # for sending the HTTP request headers and once for its body.
             self.__mocker.sentData += data
+
         @callOnce
         def settimeout(self, *args, **kwargs):
             assert not hasattr(self, "settimeout_called")
             self.settimeout_called = True
+
         def close(self):
             pass
+
         def setsockopt(self, *args, **kwargs):
             pass
 
@@ -242,74 +268,84 @@ def test_sending_non_ascii_location():
     characters only.
 
     """
+
     class MockURLOpener:
         def open(self, request, timeout=None):
             raise MyException
+
     url = "http://Дмитровский-район-152312306:9999/svc"
     transport = suds.transport.http.HttpTransport()
     transport.urlopener = MockURLOpener()
     store = suds.store.DocumentStore(wsdl=_wsdl_with_no_input_data(url))
-    client = suds.client.Client("suds://wsdl", cache=None, documentStore=store,
-        transport=transport)
+    client = suds.client.Client(
+        "suds://wsdl", cache=None, documentStore=store, transport=transport
+    )
     pytest.raises(UnicodeEncodeError, client.service.f)
 
 
-@pytest.mark.skipif(sys.version_info >= (3, 0),
-    reason="Python 2 specific functionality")
-@pytest.mark.parametrize(("urlString", "expectedException"), (
-    ("http://jorgula", MyException),
-    ("http://jorgula_\xe7", UnicodeDecodeError)))
+@pytest.mark.skipif(
+    sys.version_info >= (3, 0), reason="Python 2 specific functionality"
+)
+@pytest.mark.parametrize(
+    ("urlString", "expectedException"),
+    (("http://jorgula", MyException), ("http://jorgula_\xe7", UnicodeDecodeError)),
+)
 def test_sending_py2_bytes_location(urlString, expectedException):
     """
     Suds should accept single-byte string URL values under Python 2, but should
     still report an error if those strings contain any non-ASCII characters.
 
     """
+
     class MockURLOpener:
         def open(self, request, timeout=None):
             raise MyException
+
     transport = suds.transport.http.HttpTransport()
     transport.urlopener = MockURLOpener()
     store = suds.store.DocumentStore(wsdl=_wsdl_with_no_input_data("http://x"))
-    client = suds.client.Client("suds://wsdl", cache=None, documentStore=store,
-        transport=transport)
+    client = suds.client.Client(
+        "suds://wsdl", cache=None, documentStore=store, transport=transport
+    )
     client.options.location = suds.byte_str(urlString)
     pytest.raises(expectedException, client.service.f)
 
 
-@pytest.mark.skipif(sys.version_info < (3, 0),
-    reason="requires at least Python 3")
-@pytest.mark.parametrize("urlString", (
-    "http://jorgula",
-    "http://jorgula_\xe7"))
+@pytest.mark.skipif(sys.version_info < (3, 0), reason="requires at least Python 3")
+@pytest.mark.parametrize("urlString", ("http://jorgula", "http://jorgula_\xe7"))
 def test_sending_py3_bytes_location(urlString):
     """
     Suds should refuse to send HTTP requests with a target location specified
     as either a Python 3 bytes or bytearray object.
 
     """
+
     class MockURLOpener:
         def open(self, request, timeout=None):
             raise MyException
+
     transport = suds.transport.http.HttpTransport()
     transport.urlopener = MockURLOpener()
     store = suds.store.DocumentStore(wsdl=_wsdl_with_no_input_data("http://x"))
-    client = suds.client.Client("suds://wsdl", cache=None, documentStore=store,
-        transport=transport)
+    client = suds.client.Client(
+        "suds://wsdl", cache=None, documentStore=store, transport=transport
+    )
 
     expectedException = AssertionError
     if sys.flags.optimize:
         expectedException = AttributeError
 
-    for url in (bytes(urlString, encoding="utf-8"),
-        bytearray(urlString, encoding="utf-8")):
+    for url in (
+        bytes(urlString, encoding="utf-8"),
+        bytearray(urlString, encoding="utf-8"),
+    ):
         # Under Python 3.x we can not use the client's 'location' option to set
         # a bytes URL as it accepts only strings and in Python 3.x all strings
         # are unicode strings. Therefore, we use an ugly hack, modifying suds's
         # internal web service description structure to force it to think it
         # has a bytes object specified as a location for its 'f' web service
         # operation.
-        client.sd[0].ports[0][0].methods['f'].location = url
+        client.sd[0].ports[0][0].methods["f"].location = url
         pytest.raises(expectedException, client.service.f)
 
 
@@ -339,7 +375,8 @@ def _wsdl_with_input_data(url):
     Externally specified URL is used as the web service location.
 
     """
-    return suds.byte_str("""\
+    return suds.byte_str(
+        """\
 <?xml version="1.0" encoding="utf-8"?>
 <wsdl:definitions targetNamespace="myNamespace"
   xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
@@ -372,7 +409,9 @@ def _wsdl_with_input_data(url):
       <soap:address location="%s"/>
     </wsdl:port>
   </wsdl:service>
-</wsdl:definitions>""" % (url,))
+</wsdl:definitions>"""
+        % (url,)
+    )
 
 
 def _wsdl_with_no_input_data(url):
@@ -383,7 +422,8 @@ def _wsdl_with_no_input_data(url):
     the web service location.
 
     """
-    return suds.byte_str("""\
+    return suds.byte_str(
+        """\
 <?xml version="1.0" encoding="utf-8"?>
 <wsdl:definitions targetNamespace="myNamespace"
   xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
@@ -403,4 +443,6 @@ def _wsdl_with_no_input_data(url):
       <soap:address location="%s"/>
     </wsdl:port>
   </wsdl:service>
-</wsdl:definitions>""" % (url,))
+</wsdl:definitions>"""
+        % (url,)
+    )

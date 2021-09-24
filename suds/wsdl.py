@@ -35,12 +35,13 @@ from . import soaparray
 from urllib.parse import urljoin
 
 from logging import getLogger
+
 log = getLogger(__name__)
 
 
 wsdlns = (None, "http://schemas.xmlsoap.org/wsdl/")
-soapns = (None, 'http://schemas.xmlsoap.org/wsdl/soap/')
-soap12ns = (None, 'http://schemas.xmlsoap.org/wsdl/soap12/')
+soapns = (None, "http://schemas.xmlsoap.org/wsdl/soap/")
+soap12ns = (None, "http://schemas.xmlsoap.org/wsdl/soap12/")
 
 
 class WObject(Object):
@@ -58,7 +59,7 @@ class WObject(Object):
         Object.__init__(self)
         self.root = root
         pmd = Metadata()
-        pmd.excludes = ['root']
+        pmd.excludes = ["root"]
         pmd.wrappers = dict(qname=repr)
         self.__metadata__.__print__ = pmd
 
@@ -88,10 +89,10 @@ class NamedObject(WObject):
         @type definitions: L{Definitions}
         """
         WObject.__init__(self, root)
-        self.name = root.get('name')
+        self.name = root.get("name")
         self.qname = (self.name, definitions.tns[1])
         pmd = self.__metadata__.__print__
-        pmd.wrappers['qname'] = repr
+        pmd.wrappers["qname"] = repr
 
 
 class Definitions(WObject):
@@ -122,7 +123,7 @@ class Definitions(WObject):
     @type service: L{Service}
     """
 
-    Tag = 'definitions'
+    Tag = "definitions"
 
     def __init__(self, url, options):
         """
@@ -131,7 +132,7 @@ class Definitions(WObject):
         @param options: An options dictionary.
         @type options: L{options.Options}
         """
-        log.debug('reading WSDL at: %s ...', url)
+        log.debug("reading WSDL at: %s ...", url)
         reader = DocumentReader(options)
         d = reader.open(url)
         root = d.root()
@@ -151,9 +152,9 @@ class Definitions(WObject):
         self.add_children(self.root)
         self.children.sort()
         pmd = self.__metadata__.__print__
-        pmd.excludes.append('children')
-        pmd.excludes.append('wsdl')
-        pmd.wrappers['schema'] = repr
+        pmd.excludes.append("children")
+        pmd.excludes.append("wsdl")
+        pmd.wrappers["schema"] = repr
         self.open_imports()
         self.resolve()
         self.build_schema()
@@ -163,19 +164,20 @@ class Definitions(WObject):
         log.debug("WSDL at '%s' loaded:\n%s", url, self)
 
     def mktns(self, root):
-        """ Get/create the target namespace """
-        tns = root.get('targetNamespace')
+        """Get/create the target namespace"""
+        tns = root.get("targetNamespace")
         prefix = root.findPrefix(tns)
         if prefix is None:
-            log.debug('warning: tns (%s), not mapped to prefix', tns)
-            prefix = 'tns'
+            log.debug("warning: tns (%s), not mapped to prefix", tns)
+            prefix = "tns"
         return (prefix, tns)
 
     def add_children(self, root):
-        """ Add child objects using the factory """
+        """Add child objects using the factory"""
         for c in root.getChildren(ns=wsdlns):
             child = Factory.create(c, self)
-            if child is None: continue
+            if child is None:
+                continue
             self.children.append(child)
             if isinstance(child, Import):
                 self.imports.append(child)
@@ -197,24 +199,24 @@ class Definitions(WObject):
                 continue
 
     def open_imports(self):
-        """ Import the I{imported} WSDLs. """
+        """Import the I{imported} WSDLs."""
         for imp in self.imports:
             imp.load(self)
 
     def resolve(self):
-        """ Tell all children to resolve themselves """
+        """Tell all children to resolve themselves"""
         for c in self.children:
             c.resolve(self)
 
     def build_schema(self):
-        """ Process L{Types} objects and create the schema collection """
+        """Process L{Types} objects and create the schema collection"""
         container = SchemaCollection(self)
         for t in [t for t in self.types if t.local()]:
             for root in t.contents():
                 schema = Schema(root, self.url, self.options, container)
                 container.add(schema)
         if not len(container):
-            root = Element.buildPath(self.root, 'types/schema')
+            root = Element.buildPath(self.root, "types/schema")
             schema = Schema(root, self.url, self.options, container)
             container.add(schema)
         self.schema = container.load(self.options)
@@ -223,32 +225,32 @@ class Definitions(WObject):
         return self.schema
 
     def add_methods(self, service):
-        """ Build method view for service """
+        """Build method view for service"""
         bindings = {
-            'document/literal' : Document(self),
-            'rpc/literal' : RPC(self),
-            'rpc/encoded' : Encoded(self)
+            "document/literal": Document(self),
+            "rpc/literal": RPC(self),
+            "rpc/encoded": Encoded(self),
         }
         for p in service.ports:
             binding = p.binding
             ptype = p.binding.type
             operations = list(p.binding.type.operations.values())
             for name in [op.name for op in operations]:
-                m = Facade('Method')
+                m = Facade("Method")
                 m.name = name
                 m.location = p.location
-                m.binding = Facade('binding')
+                m.binding = Facade("binding")
                 op = binding.operation(name)
                 m.soap = op.soap
-                key = '/'.join((op.soap.style, op.soap.input.body.use))
+                key = "/".join((op.soap.style, op.soap.input.body.use))
                 m.binding.input = bindings.get(key)
-                key = '/'.join((op.soap.style, op.soap.output.body.use))
+                key = "/".join((op.soap.style, op.soap.output.body.use))
                 m.binding.output = bindings.get(key)
                 op = ptype.operation(name)
                 p.methods[name] = m
 
     def set_wrapped(self):
-        """ set (wrapped|bare) flag on messages """
+        """set (wrapped|bare) flag on messages"""
         for b in list(self.bindings.values()):
             for op in list(b.operations.values()):
                 for body in (op.soap.input.body, op.soap.output.body):
@@ -270,7 +272,7 @@ class Definitions(WObject):
                         body.wrapped = True
 
     def __getstate__(self):
-        nopickle = ('options',)
+        nopickle = ("options",)
         state = self.__dict__.copy()
         for k in nopickle:
             if k in state:
@@ -278,7 +280,7 @@ class Definitions(WObject):
         return state
 
     def __repr__(self):
-        return 'Definitions (id=%s)' % self.id
+        return "Definitions (id=%s)" % self.id
 
 
 class Import(WObject):
@@ -300,17 +302,17 @@ class Import(WObject):
         @type definitions: L{Definitions}
         """
         WObject.__init__(self, root)
-        self.location = root.get('location')
-        self.ns = root.get('namespace')
+        self.location = root.get("location")
+        self.ns = root.get("namespace")
         self.imported = None
         pmd = self.__metadata__.__print__
-        pmd.wrappers['imported'] = repr
+        pmd.wrappers["imported"] = repr
 
     def load(self, definitions):
-        """ Load the object by opening the URL """
+        """Load the object by opening the URL"""
         url = self.location
-        log.debug('importing (%s)', url)
-        if '://' not in url:
+        log.debug("importing (%s)", url)
+        if "://" not in url:
             url = urljoin(definitions.url, url)
         options = definitions.options
         d = Definitions(url, options)
@@ -323,25 +325,25 @@ class Import(WObject):
         raise Exception('document at "%s" is unknown' % url)
 
     def import_definitions(self, definitions, d):
-        """ import/merge WSDL definitions """
+        """import/merge WSDL definitions"""
         definitions.types += d.types
         definitions.messages.update(d.messages)
         definitions.port_types.update(d.port_types)
         definitions.bindings.update(d.bindings)
         self.imported = d
-        log.debug('imported (WSDL):\n%s', d)
+        log.debug("imported (WSDL):\n%s", d)
 
     def import_schema(self, definitions, d):
-        """ import schema as <types/> content """
+        """import schema as <types/> content"""
         if not len(definitions.types):
-            root = Element('types', ns=wsdlns)
+            root = Element("types", ns=wsdlns)
             definitions.root.insert(root)
             types = Types(root, definitions)
             definitions.types.append(types)
         else:
             types = definitions.types[-1]
         types.root.append(d.root)
-        log.debug('imported (XSD):\n%s', d.root)
+        log.debug("imported (XSD):\n%s", d.root)
 
     def __gt__(self, other):
         return False
@@ -363,16 +365,16 @@ class Types(WObject):
         self.definitions = definitions
 
     def contents(self):
-        return self.root.getChildren('schema', Namespace.xsdns)
+        return self.root.getChildren("schema", Namespace.xsdns)
 
     def schema(self):
         return self.definitions.schema
 
     def local(self):
-        return ( self.definitions.schema is None )
+        return self.definitions.schema is None
 
     def imported(self):
-        return ( not self.local() )
+        return not self.local()
 
     def __gt__(self, other):
         return isinstance(other, Import)
@@ -401,11 +403,11 @@ class Part(NamedObject):
         pmd.wrappers = dict(element=repr, type=repr)
         self.__metadata__.__print__ = pmd
         tns = definitions.tns
-        self.element = self.__getref('element', tns)
-        self.type = self.__getref('type', tns)
+        self.element = self.__getref("element", tns)
+        self.type = self.__getref("type", tns)
 
     def __getref(self, a, tns):
-        """ Get the qualified value of attribute named 'a'."""
+        """Get the qualified value of attribute named 'a'."""
         s = self.root.get(a)
         if s is None:
             return s
@@ -429,7 +431,7 @@ class Message(NamedObject):
         """
         NamedObject.__init__(self, root, definitions)
         self.parts = []
-        for p in root.getChildren('part'):
+        for p in root.getChildren("part"):
             part = Part(p, definitions)
             self.parts.append(part)
 
@@ -453,25 +455,25 @@ class PortType(NamedObject):
         """
         NamedObject.__init__(self, root, definitions)
         self.operations = {}
-        for c in root.getChildren('operation'):
-            op = Facade('Operation')
-            op.name = c.get('name')
+        for c in root.getChildren("operation"):
+            op = Facade("Operation")
+            op.name = c.get("name")
             op.tns = definitions.tns
-            input = c.getChild('input')
+            input = c.getChild("input")
             if input is None:
                 op.input = None
             else:
-                op.input = input.get('message')
-            output = c.getChild('output')
+                op.input = input.get("message")
+            output = c.getChild("output")
             if output is None:
                 op.output = None
             else:
-                op.output = output.get('message')
+                op.output = output.get("message")
             faults = []
-            for fault in c.getChildren('fault'):
-                f = Facade('Fault')
-                f.name = fault.get('name')
-                f.message = fault.get('message')
+            for fault in c.getChildren("fault"):
+                f = Facade("Fault")
+                f.name = fault.get("name")
+                f.message = fault.get("message")
                 faults.append(f)
             op.faults = faults
             self.operations[op.name] = op
@@ -484,7 +486,7 @@ class PortType(NamedObject):
         """
         for op in list(self.operations.values()):
             if op.input is None:
-                op.input = Message(Element('no-input'), definitions)
+                op.input = Message(Element("no-input"), definitions)
             else:
                 qref = qualify(op.input, self.root, definitions.tns)
                 msg = definitions.messages.get(qref)
@@ -493,7 +495,7 @@ class PortType(NamedObject):
                 else:
                     op.input = msg
             if op.output is None:
-                op.output = Message(Element('no-output'), definitions)
+                op.output = Message(Element("no-output"), definitions)
             else:
                 qref = qualify(op.output, self.root, definitions.tns)
                 msg = definitions.messages.get(qref)
@@ -542,106 +544,106 @@ class Binding(NamedObject):
         """
         NamedObject.__init__(self, root, definitions)
         self.operations = {}
-        self.type = root.get('type')
+        self.type = root.get("type")
         sr = self.soaproot()
         if sr is None:
             self.soap = None
             log.debug('binding: "%s" not a SOAP binding', self.name)
             return
-        soap = Facade('soap')
+        soap = Facade("soap")
         self.soap = soap
-        self.soap.style = sr.get('style', default='document')
+        self.soap.style = sr.get("style", default="document")
         self.add_operations(self.root, definitions)
 
     def soaproot(self):
-        """ get the soap:binding """
+        """get the soap:binding"""
         for ns in (soapns, soap12ns):
-            sr = self.root.getChild('binding', ns=ns)
+            sr = self.root.getChild("binding", ns=ns)
             if sr is not None:
                 return sr
         return None
 
     def add_operations(self, root, definitions):
-        """ Add <operation/> children """
-        dsop = Element('operation', ns=soapns)
-        for c in root.getChildren('operation'):
-            op = Facade('Operation')
-            op.name = c.get('name')
-            sop = c.getChild('operation', default=dsop)
-            soap = Facade('soap')
-            soap.action = '"%s"' % sop.get('soapAction', default='')
-            soap.style = sop.get('style', default=self.soap.style)
-            soap.input = Facade('Input')
-            soap.input.body = Facade('Body')
+        """Add <operation/> children"""
+        dsop = Element("operation", ns=soapns)
+        for c in root.getChildren("operation"):
+            op = Facade("Operation")
+            op.name = c.get("name")
+            sop = c.getChild("operation", default=dsop)
+            soap = Facade("soap")
+            soap.action = '"%s"' % sop.get("soapAction", default="")
+            soap.style = sop.get("style", default=self.soap.style)
+            soap.input = Facade("Input")
+            soap.input.body = Facade("Body")
             soap.input.headers = []
-            soap.output = Facade('Output')
-            soap.output.body = Facade('Body')
+            soap.output = Facade("Output")
+            soap.output.body = Facade("Body")
             soap.output.headers = []
             op.soap = soap
-            input = c.getChild('input')
+            input = c.getChild("input")
             if input is None:
-                input = Element('input', ns=wsdlns)
-            body = input.getChild('body')
+                input = Element("input", ns=wsdlns)
+            body = input.getChild("body")
             self.body(definitions, soap.input.body, body)
-            for header in input.getChildren('header'):
+            for header in input.getChildren("header"):
                 self.header(definitions, soap.input, header)
-            output = c.getChild('output')
+            output = c.getChild("output")
             if output is None:
-                output = Element('output', ns=wsdlns)
-            body = output.getChild('body')
+                output = Element("output", ns=wsdlns)
+            body = output.getChild("body")
             self.body(definitions, soap.output.body, body)
-            for header in output.getChildren('header'):
+            for header in output.getChildren("header"):
                 self.header(definitions, soap.output, header)
             faults = []
-            for fault in c.getChildren('fault'):
-                sf = fault.getChild('fault')
+            for fault in c.getChildren("fault"):
+                sf = fault.getChild("fault")
                 if sf is None:
                     continue
-                fn = fault.get('name')
-                f = Facade('Fault')
-                f.name = sf.get('name', default=fn)
-                f.use = sf.get('use', default='literal')
+                fn = fault.get("name")
+                f = Facade("Fault")
+                f.name = sf.get("name", default=fn)
+                f.use = sf.get("use", default="literal")
                 faults.append(f)
             soap.faults = faults
             self.operations[op.name] = op
 
     def body(self, definitions, body, root):
-        """ add the input/output body properties """
+        """add the input/output body properties"""
         if root is None:
-            body.use = 'literal'
+            body.use = "literal"
             body.namespace = definitions.tns
             body.parts = ()
             return
-        parts = root.get('parts')
+        parts = root.get("parts")
         if parts is None:
             body.parts = ()
         else:
-            body.parts = re.split('[\s,]', parts)
-        body.use = root.get('use', default='literal')
-        ns = root.get('namespace')
+            body.parts = re.split("[\s,]", parts)
+        body.use = root.get("use", default="literal")
+        ns = root.get("namespace")
         if ns is None:
             body.namespace = definitions.tns
         else:
-            prefix = root.findPrefix(ns, 'b0')
+            prefix = root.findPrefix(ns, "b0")
             body.namespace = (prefix, ns)
 
     def header(self, definitions, parent, root):
-        """ add the input/output header properties """
+        """add the input/output header properties"""
         if root is None:
             return
-        header = Facade('Header')
+        header = Facade("Header")
         parent.headers.append(header)
-        header.use = root.get('use', default='literal')
-        ns = root.get('namespace')
+        header.use = root.get("use", default="literal")
+        ns = root.get("namespace")
         if ns is None:
             header.namespace = definitions.tns
         else:
-            prefix = root.findPrefix(ns, 'h0')
+            prefix = root.findPrefix(ns, "h0")
             header.namespace = (prefix, ns)
-        msg = root.get('message')
+        msg = root.get("message")
         if msg is not None:
             header.message = msg
-        part = root.get('part')
+        part = root.get("part")
         if part is not None:
             header.part = part
 
@@ -746,9 +748,11 @@ class Binding(NamedObject):
                 if f.name == fault.name:
                     fault.parts = f.message.parts
                     continue
-            if hasattr(fault, 'parts'):
+            if hasattr(fault, "parts"):
                 continue
-            raise Exception("fault '%s' not defined in portType '%s'" % (fault.name, self.type.name))
+            raise Exception(
+                "fault '%s' not defined in portType '%s'" % (fault.name, self.type.name)
+            )
 
     def operation(self, name):
         """
@@ -765,7 +769,7 @@ class Binding(NamedObject):
             raise MethodNotFound(name)
 
     def __gt__(self, other):
-        return ( not isinstance(other, Service) )
+        return not isinstance(other, Service)
 
 
 class Port(NamedObject):
@@ -790,9 +794,9 @@ class Port(NamedObject):
         """
         NamedObject.__init__(self, root, definitions)
         self.__service = service
-        self.binding = root.get('binding')
-        address = root.getChild('address')
-        self.location = address is not None and address.get('location')
+        self.binding = root.get("binding")
+        address = root.getChild("address")
+        self.location = address is not None and address.get("location")
         self.methods = {}
 
     def method(self, name):
@@ -824,7 +828,7 @@ class Service(NamedObject):
         """
         NamedObject.__init__(self, root, definitions)
         self.ports = []
-        for p in root.getChildren('port'):
+        for p in root.getChildren("port"):
             port = Port(p, definitions, self)
             self.ports.append(port)
 
@@ -885,14 +889,13 @@ class Factory:
     @type tags: dict
     """
 
-    tags =\
-    {
-        'import' : Import,
-        'types' : Types,
-        'message' : Message,
-        'portType' : PortType,
-        'binding' : Binding,
-        'service' : Service,
+    tags = {
+        "import": Import,
+        "types": Types,
+        "message": Message,
+        "portType": PortType,
+        "binding": Binding,
+        "service": Service,
     }
 
     @classmethod

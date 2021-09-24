@@ -24,7 +24,8 @@ document content to be distributed alongside the suds library.
 import suds
 
 
-soap5_encoding_schema = suds.byte_str("""\
+soap5_encoding_schema = suds.byte_str(
+    """\
 <?xml version="1.0" encoding="UTF-8"?>
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
     xmlns:tns="http://schemas.xmlsoap.org/soap/encoding/"
@@ -524,7 +525,8 @@ soap5_encoding_schema = suds.byte_str("""\
 
   <xs:element name="anyType"/>
 </xs:schema>
-""")
+"""
+)
 
 
 class DocumentStore:
@@ -538,8 +540,7 @@ class DocumentStore:
     """
 
     def __init__(self, *args, **kwargs):
-        self.__store = {
-            'schemas.xmlsoap.org/soap/encoding/':soap5_encoding_schema}
+        self.__store = {"schemas.xmlsoap.org/soap/encoding/": soap5_encoding_schema}
         self.update = self.__store.update
         self.update(*args, **kwargs)
 
@@ -565,7 +566,7 @@ class DocumentStore:
         """
         protocol, location = self.__split(url)
         content = self.__find(location)
-        if protocol == 'suds' and content is None:
+        if protocol == "suds" and content is None:
             raise Exception('location "%s" not in document store' % location)
         return content
 
@@ -587,7 +588,7 @@ class DocumentStore:
         @return: (I{url}, I{location})
         @rtype: tuple
         """
-        parts = url.split('://', 1)
+        parts = url.split("://", 1)
         if len(parts) == 2:
             return parts
         return None, url

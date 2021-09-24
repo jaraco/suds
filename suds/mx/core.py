@@ -26,6 +26,7 @@ from suds.sax.document import Document
 from suds.sudsobject import Property
 
 from logging import getLogger
+
 log = getLogger(__name__)
 
 
@@ -38,8 +39,7 @@ class Core:
     """
 
     def __init__(self):
-        """
-        """
+        """ """
         self.appender = ContentAppender(self)
 
     def process(self, content):
@@ -49,7 +49,7 @@ class Core:
         @param content: The content to process.
         @type content: L{Object}
         """
-        log.debug('processing:\n%s', content)
+        log.debug("processing:\n%s", content)
         self.reset()
         if content.tag is None:
             content.tag = content.value.__class__.__name__
@@ -67,7 +67,7 @@ class Core:
         @param content: The content to append.
         @type content: L{Object}
         """
-        log.debug('appending parent:\n%s\ncontent:\n%s', parent, content)
+        log.debug("appending parent:\n%s\ncontent:\n%s", parent, content)
         if self.start(content):
             self.appender.append(parent, content)
             self.end(parent, content)

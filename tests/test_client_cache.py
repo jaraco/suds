@@ -24,6 +24,7 @@ Implemented using the 'pytest' testing framework.
 
 if __name__ == "__main__":
     from . import __init__
+
     __init__.runUsingPyTest(globals())
 
 
@@ -36,6 +37,7 @@ import pytest
 
 class MyException(Exception):
     """Local exception class used in this testing module."""
+
     pass
 
 
@@ -48,30 +50,41 @@ def test_default_cache_construction(monkeypatch):
     object does not get created or gets created too late.
 
     """
+
     def constructDefaultCache(days):
         assert days == 1
         raise MyException
+
     class MockStore(suds.store.DocumentStore):
         def open(self, *args, **kwargs):
             pytest.fail("Default cache not created in time.")
+
     monkeypatch.setattr("suds.client.ObjectCache", constructDefaultCache)
     monkeypatch.setattr("suds.store.DocumentStore", MockStore)
-    pytest.raises(MyException, suds.client.Client, "some_url",
-        documentStore=MockStore())
+    pytest.raises(
+        MyException, suds.client.Client, "some_url", documentStore=MockStore()
+    )
 
 
-@pytest.mark.parametrize("cache", (
-    None,
-    suds.cache.NoCache(),
-    suds.cache.ObjectCache()))
+@pytest.mark.parametrize(
+    "cache", (None, suds.cache.NoCache(), suds.cache.ObjectCache())
+)
 def test_avoiding_default_cache(cache, monkeypatch):
     """Explicitly specified cache should avoid default cache construction."""
+
     def constructDefaultCache(*args, **kwargs):
         pytest.fail("Unexpected default cache instantiation.")
+
     class MockStore(suds.store.DocumentStore):
         def open(self, *args, **kwargs):
             raise MyException
+
     monkeypatch.setattr("suds.client.ObjectCache", constructDefaultCache)
     monkeypatch.setattr("suds.store.DocumentStore", MockStore)
-    pytest.raises(MyException, suds.client.Client, "some_url",
-        documentStore=MockStore(), cache=cache)
+    pytest.raises(
+        MyException,
+        suds.client.Client,
+        "some_url",
+        documentStore=MockStore(),
+        cache=cache,
+    )

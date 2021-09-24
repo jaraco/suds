@@ -25,6 +25,7 @@ Implemented using the 'pytest' testing framework.
 
 if __name__ == "__main__":
     from . import __init__
+
     __init__.runUsingPyTest(globals())
 
 
@@ -40,8 +41,7 @@ import xml.sax
 
 def test_ACCEPTED_and_NO_CONTENT_status_reported_as_None_with_faults():
     client = tests.client_from_wsdl(_wsdl__simple, faults=True)
-    f = lambda r, s : client.service.f(__inject={"reply":suds.byte_str(r),
-        "status":s})
+    f = lambda r, s: client.service.f(__inject={"reply": suds.byte_str(r), "status": s})
     assert f("", None) is None
     pytest.raises(Exception, f, "", http.client.INTERNAL_SERVER_ERROR)
     assert f("", http.client.ACCEPTED) is None
@@ -52,8 +52,7 @@ def test_ACCEPTED_and_NO_CONTENT_status_reported_as_None_with_faults():
 
 def test_ACCEPTED_and_NO_CONTENT_status_reported_as_None_without_faults():
     client = tests.client_from_wsdl(_wsdl__simple, faults=False)
-    f = lambda r, s : client.service.f(__inject={"reply":suds.byte_str(r),
-        "status":s})
+    f = lambda r, s: client.service.f(__inject={"reply": suds.byte_str(r), "status": s})
     assert f("", None) is not None
     assert f("", http.client.INTERNAL_SERVER_ERROR) is not None
     assert f("", http.client.ACCEPTED) is None
@@ -65,8 +64,11 @@ def test_ACCEPTED_and_NO_CONTENT_status_reported_as_None_without_faults():
 def test_badly_formed_reply_XML():
     for faults in (True, False):
         client = tests.client_from_wsdl(_wsdl__simple, faults=faults)
-        pytest.raises(xml.sax.SAXParseException, client.service.f,
-            __inject={"reply":suds.byte_str("bad food")})
+        pytest.raises(
+            xml.sax.SAXParseException,
+            client.service.f,
+            __inject={"reply": suds.byte_str("bad food")},
+        )
 
 
 # TODO: Update the current restriction type output parameter handling so such
@@ -74,7 +76,9 @@ def test_badly_formed_reply_XML():
 # restriction's underlying data type.
 @pytest.mark.xfail
 def test_restriction_data_types():
-    client_unnamed = tests.client_from_wsdl(tests.wsdl_output("""\
+    client_unnamed = tests.client_from_wsdl(
+        tests.wsdl_output(
+            """\
       <xsd:element name="Elemento">
         <xsd:simpleType>
           <xsd:restriction base="xsd:int">
@@ -83,9 +87,14 @@ def test_restriction_data_types():
             <xsd:enumeration value="5" />
           </xsd:restriction>
         </xsd:simpleType>
-      </xsd:element>""", "Elemento"))
+      </xsd:element>""",
+            "Elemento",
+        )
+    )
 
-    client_named = tests.client_from_wsdl(tests.wsdl_output("""\
+    client_named = tests.client_from_wsdl(
+        tests.wsdl_output(
+            """\
       <xsd:simpleType name="MyType">
         <xsd:restriction base="xsd:int">
           <xsd:enumeration value="1" />
@@ -93,9 +102,14 @@ def test_restriction_data_types():
           <xsd:enumeration value="5" />
         </xsd:restriction>
       </xsd:simpleType>
-      <xsd:element name="Elemento" type="ns:MyType" />""", "Elemento"))
+      <xsd:element name="Elemento" type="ns:MyType" />""",
+            "Elemento",
+        )
+    )
 
-    client_twice_restricted = tests.client_from_wsdl(tests.wsdl_output("""\
+    client_twice_restricted = tests.client_from_wsdl(
+        tests.wsdl_output(
+            """\
       <xsd:simpleType name="MyTypeGeneric">
         <xsd:restriction base="xsd:int">
           <xsd:enumeration value="1" />
@@ -112,16 +126,25 @@ def test_restriction_data_types():
           <xsd:enumeration value="5" />
         </xsd:restriction>
       </xsd:simpleType>
-      <xsd:element name="Elemento" type="ns:MyType" />""", "Elemento"))
+      <xsd:element name="Elemento" type="ns:MyType" />""",
+            "Elemento",
+        )
+    )
 
     for client in (client_unnamed, client_named, client_twice_restricted):
-        response = client.service.f(__inject=dict(reply=suds.byte_str("""\
+        response = client.service.f(
+            __inject=dict(
+                reply=suds.byte_str(
+                    """\
 <?xml version="1.0"?>
 <env:Envelope xmlns:env="http://schemas.xmlsoap.org/soap/envelope/">
   <env:Body>
     <Elemento xmlns="my-namespace">5</Elemento>
   </env:Body>
-</env:Envelope>""")))
+</env:Envelope>"""
+                )
+            )
+        )
         assert response.__class__ is int
         assert response == 5
 
@@ -130,108 +153,178 @@ def test_builtin_data_types(monkeypatch):
     monkeypatch.delitem(locals(), "e", False)
 
     integer_type_mapping = {
-        "byte":int,
-        "int":int,
-        "integer":int,
-        "long":int,
-        "negativeInteger":int,
-        "nonNegativeInteger":int,
-        "nonPositiveInteger":int,
-        "positiveInteger":int,
-        "short":int,
-        "unsignedByte":int,
-        "unsignedInt":int,
-        "unsignedLong":int,
-        "unsignedShort":int}
+        "byte": int,
+        "int": int,
+        "integer": int,
+        "long": int,
+        "negativeInteger": int,
+        "nonNegativeInteger": int,
+        "nonPositiveInteger": int,
+        "positiveInteger": int,
+        "short": int,
+        "unsignedByte": int,
+        "unsignedInt": int,
+        "unsignedLong": int,
+        "unsignedShort": int,
+    }
     for tag, type in list(integer_type_mapping.items()):
-        client = tests.client_from_wsdl(tests.wsdl_output("""\
-      <xsd:element name="value" type="xsd:%s" />""" % tag, "value"))
-        response = client.service.f(__inject=dict(reply=suds.byte_str("""\
+        client = tests.client_from_wsdl(
+            tests.wsdl_output(
+                """\
+      <xsd:element name="value" type="xsd:%s" />"""
+                % tag,
+                "value",
+            )
+        )
+        response = client.service.f(
+            __inject=dict(
+                reply=suds.byte_str(
+                    """\
 <?xml version="1.0"?>
 <env:Envelope xmlns:env="http://schemas.xmlsoap.org/soap/envelope/">
   <env:Body>
     <value xmlns="my-namespace">15</value>
   </env:Body>
-</env:Envelope>""")))
+</env:Envelope>"""
+                )
+            )
+        )
         assert response.__class__ is type
         assert response == 15
 
-    boolean_mapping = {"0":False, "1":True, "false":False, "true":True}
-    client = tests.client_from_wsdl(tests.wsdl_output("""\
-      <xsd:element name="value" type="xsd:boolean" />""", "value"))
+    boolean_mapping = {"0": False, "1": True, "false": False, "true": True}
+    client = tests.client_from_wsdl(
+        tests.wsdl_output(
+            """\
+      <xsd:element name="value" type="xsd:boolean" />""",
+            "value",
+        )
+    )
     for value, expected_value in list(boolean_mapping.items()):
-        response = client.service.f(__inject=dict(reply=suds.byte_str("""\
+        response = client.service.f(
+            __inject=dict(
+                reply=suds.byte_str(
+                    """\
 <?xml version="1.0"?>
 <env:Envelope xmlns:env="http://schemas.xmlsoap.org/soap/envelope/">
   <env:Body>
     <value xmlns="my-namespace">%s</value>
   </env:Body>
-</env:Envelope>""" % value)))
+</env:Envelope>"""
+                    % value
+                )
+            )
+        )
         assert response.__class__ is bool
         assert response == expected_value
 
     # Suds implements no extra range checking.
-    client = tests.client_from_wsdl(tests.wsdl_output("""\
-      <xsd:element name="value" type="xsd:byte" />""", "value"))
-    response = client.service.f(__inject=dict(reply=suds.byte_str("""\
+    client = tests.client_from_wsdl(
+        tests.wsdl_output(
+            """\
+      <xsd:element name="value" type="xsd:byte" />""",
+            "value",
+        )
+    )
+    response = client.service.f(
+        __inject=dict(
+            reply=suds.byte_str(
+                """\
 <?xml version="1.0"?>
 <env:Envelope xmlns:env="http://schemas.xmlsoap.org/soap/envelope/">
   <env:Body>
     <value xmlns="my-namespace">1500</value>
   </env:Body>
-</env:Envelope>""")))
+</env:Envelope>"""
+            )
+        )
+    )
     assert response.__class__ is int
     assert response == 1500
 
     #   Suds raises raw Python exceptions when it fails to convert received
     # response element data to its mapped Python integer data type, according
     # to the used WSDL schema.
-    client = tests.client_from_wsdl(tests.wsdl_output("""\
-      <xsd:element name="value" type="xsd:int" />""", "value"))
-    e = pytest.raises(ValueError, client.service.f, __inject=dict(
-        reply=suds.byte_str("""\
+    client = tests.client_from_wsdl(
+        tests.wsdl_output(
+            """\
+      <xsd:element name="value" type="xsd:int" />""",
+            "value",
+        )
+    )
+    e = pytest.raises(
+        ValueError,
+        client.service.f,
+        __inject=dict(
+            reply=suds.byte_str(
+                """\
 <?xml version="1.0"?>
 <env:Envelope xmlns:env="http://schemas.xmlsoap.org/soap/envelope/">
   <env:Body>
     <value xmlns="my-namespace">Fifteen</value>
   </env:Body>
-</env:Envelope>"""))).value
+</env:Envelope>"""
+            )
+        ),
+    ).value
     # ValueError instance received here has different string representations
     # depending on the Python version used:
     #   Python 2.4:
     #     "invalid literal for int(): Fifteen"
     #   Python 2.7.3, 3.2.3:
     #     "invalid literal for int() with base 10: 'Fifteen'"
-    assert re.match("invalid literal for int\(\)( with base 10)?: ('?)Fifteen"
-        "\\2$", str(e))
+    assert re.match(
+        "invalid literal for int\(\)( with base 10)?: ('?)Fifteen" "\\2$", str(e)
+    )
 
     # Suds returns invalid boolean values as None.
     invalid_boolean_values = ("True", "", "False", "2", "Fedora", "Z", "-1")
-    client = tests.client_from_wsdl(tests.wsdl_output("""\
-      <xsd:element name="value" type="xsd:boolean" />""", "value"))
+    client = tests.client_from_wsdl(
+        tests.wsdl_output(
+            """\
+      <xsd:element name="value" type="xsd:boolean" />""",
+            "value",
+        )
+    )
     for value in invalid_boolean_values:
-        response = client.service.f(__inject=dict(reply=suds.byte_str("""\
+        response = client.service.f(
+            __inject=dict(
+                reply=suds.byte_str(
+                    """\
 <?xml version="1.0"?>
 <env:Envelope xmlns:env="http://schemas.xmlsoap.org/soap/envelope/">
   <env:Body>
     <value xmlns="my-namespace">%s</value>
   </env:Body>
-</env:Envelope>""" % value)))
+</env:Envelope>"""
+                    % value
+                )
+            )
+        )
         assert response is None
 
 
 def test_disabling_automated_simple_interface_unwrapping():
-    client = tests.client_from_wsdl(tests.wsdl_output("""\
+    client = tests.client_from_wsdl(
+        tests.wsdl_output(
+            """\
       <xsd:element name="Wrapper">
         <xsd:complexType>
           <xsd:sequence>
             <xsd:element name="Elemento" type="xsd:string" />
           </xsd:sequence>
         </xsd:complexType>
-      </xsd:element>""", "Wrapper"), unwrap=False)
+      </xsd:element>""",
+            "Wrapper",
+        ),
+        unwrap=False,
+    )
     assert not _isOutputWrapped(client, "f")
 
-    response = client.service.f(__inject=dict(reply=suds.byte_str("""\
+    response = client.service.f(
+        __inject=dict(
+            reply=suds.byte_str(
+                """\
 <?xml version="1.0"?>
 <env:Envelope xmlns:env="http://schemas.xmlsoap.org/soap/envelope/">
   <env:Body>
@@ -239,7 +332,10 @@ def test_disabling_automated_simple_interface_unwrapping():
         <Elemento>La-di-da-da-da</Elemento>
     </Wrapper>
   </env:Body>
-</env:Envelope>""")))
+</env:Envelope>"""
+            )
+        )
+    )
 
     assert response.__class__.__name__ == "Wrapper"
     assert len(response.__class__.__bases__) == 1
@@ -250,8 +346,9 @@ def test_disabling_automated_simple_interface_unwrapping():
 
 def test_empty_reply():
     client = tests.client_from_wsdl(_wsdl__simple, faults=False)
-    f = lambda status=None, description=None : client.service.f(__inject=dict(
-        reply=suds.byte_str(), status=status, description=description))
+    f = lambda status=None, description=None: client.service.f(
+        __inject=dict(reply=suds.byte_str(), status=status, description=description)
+    )
     status, reason = f()
     assert status == http.client.OK
     assert reason is None
@@ -260,20 +357,21 @@ def test_empty_reply():
     assert reason is None
     status, reason = f(http.client.INTERNAL_SERVER_ERROR)
     assert status == http.client.INTERNAL_SERVER_ERROR
-    assert reason == 'injected reply'
+    assert reason == "injected reply"
     status, reason = f(http.client.FORBIDDEN)
     assert status == http.client.FORBIDDEN
-    assert reason == 'injected reply'
+    assert reason == "injected reply"
     status, reason = f(http.client.FORBIDDEN, "kwack")
     assert status == http.client.FORBIDDEN
-    assert reason == 'kwack'
+    assert reason == "kwack"
 
 
 def test_fault_reply_with_unicode_faultstring(monkeypatch):
     monkeypatch.delitem(locals(), "e", False)
 
     unicode_string = "€ Jurko Gospodnetić ČĆŽŠĐčćžšđ"
-    fault_xml = suds.byte_str("""\
+    fault_xml = suds.byte_str(
+        """\
 <?xml version="1.0"?>
 <env:Envelope xmlns:env="http://schemas.xmlsoap.org/soap/envelope/">
   <env:Body>
@@ -283,7 +381,9 @@ def test_fault_reply_with_unicode_faultstring(monkeypatch):
     </env:Fault>
   </env:Body>
 </env:Envelope>
-""" % unicode_string)
+"""
+        % unicode_string
+    )
 
     client = tests.client_from_wsdl(_wsdl__simple, faults=True)
     inject = dict(reply=fault_xml, status=http.client.INTERNAL_SERVER_ERROR)
@@ -292,8 +392,9 @@ def test_fault_reply_with_unicode_faultstring(monkeypatch):
     assert e.document.__class__ is suds.sax.document.Document
 
     client = tests.client_from_wsdl(_wsdl__simple, faults=False)
-    status, fault = client.service.f(__inject=dict(reply=fault_xml,
-        status=http.client.INTERNAL_SERVER_ERROR))
+    status, fault = client.service.f(
+        __inject=dict(reply=fault_xml, status=http.client.INTERNAL_SERVER_ERROR)
+    )
     assert status == http.client.INTERNAL_SERVER_ERROR
     assert fault.faultstring == unicode_string
 
@@ -301,7 +402,8 @@ def test_fault_reply_with_unicode_faultstring(monkeypatch):
 def test_invalid_fault_namespace(monkeypatch):
     monkeypatch.delitem(locals(), "e", False)
 
-    fault_xml = suds.byte_str("""\
+    fault_xml = suds.byte_str(
+        """\
 <?xml version="1.0"?>
 <env:Envelope xmlns:env="http://schemas.xmlsoap.org/soap/envelope/" xmlns:p="x">
   <env:Body>
@@ -314,17 +416,23 @@ def test_invalid_fault_namespace(monkeypatch):
     </p:Fault>
   </env:Body>
 </env:Envelope>
-""")
+"""
+    )
     client = tests.client_from_wsdl(_wsdl__simple, faults=False)
     inject = dict(reply=fault_xml, status=http.client.OK)
     e = pytest.raises(Exception, client.service.f, __inject=inject).value
     assert e.__class__ is Exception
     assert str(e) == "<faultcode/> not mapped to message part"
 
-    for http_status in (http.client.INTERNAL_SERVER_ERROR,
-        http.client.PAYMENT_REQUIRED):
-        status, reason = client.service.f(__inject=dict(reply=fault_xml,
-            status=http_status, description="trla baba lan"))
+    for http_status in (
+        http.client.INTERNAL_SERVER_ERROR,
+        http.client.PAYMENT_REQUIRED,
+    ):
+        status, reason = client.service.f(
+            __inject=dict(
+                reply=fault_xml, status=http_status, description="trla baba lan"
+            )
+        )
         assert status == http_status
         assert reason == "trla baba lan"
 
@@ -335,23 +443,33 @@ def test_missing_wrapper_response():
     interpreting received SOAP Response XML.
 
     """
-    client = tests.client_from_wsdl(tests.wsdl_output("""\
+    client = tests.client_from_wsdl(
+        tests.wsdl_output(
+            """\
       <xsd:element name="Wrapper">
         <xsd:complexType>
           <xsd:sequence>
             <xsd:element name="fResponse" type="xsd:string" />
           </xsd:sequence>
         </xsd:complexType>
-      </xsd:element>""", "Wrapper"))
+      </xsd:element>""",
+            "Wrapper",
+        )
+    )
     assert _isOutputWrapped(client, "f")
 
-    response_with_missing_wrapper = client.service.f(__inject=dict(
-        reply=suds.byte_str("""<?xml version="1.0"?>
+    response_with_missing_wrapper = client.service.f(
+        __inject=dict(
+            reply=suds.byte_str(
+                """<?xml version="1.0"?>
 <env:Envelope xmlns:env="http://schemas.xmlsoap.org/soap/envelope/">
   <env:Body>
     <fResponse xmlns="my-namespace">Anything</fResponse>
   </env:Body>
-</env:Envelope>""")))
+</env:Envelope>"""
+            )
+        )
+    )
     assert response_with_missing_wrapper is None
 
 
@@ -368,8 +486,11 @@ def test_reply_error_with_detail_with_fault(monkeypatch):
         assert e.document.__class__ is suds.sax.document.Document
         assert str(e) == "Server raised fault: 'Dummy error.'"
 
-    inject = dict(reply=_fault_reply__with_detail, status=http.client.BAD_REQUEST,
-        description="quack-quack")
+    inject = dict(
+        reply=_fault_reply__with_detail,
+        status=http.client.BAD_REQUEST,
+        description="quack-quack",
+    )
     e = pytest.raises(Exception, client.service.f, __inject=inject).value
     assert e.__class__ is Exception
     assert e.args[0][0] == http.client.BAD_REQUEST
@@ -380,19 +501,25 @@ def test_reply_error_with_detail_without_fault():
     client = tests.client_from_wsdl(_wsdl__simple, faults=False)
 
     for http_status in (http.client.OK, http.client.INTERNAL_SERVER_ERROR):
-        status, fault = client.service.f(__inject=dict(
-            reply=_fault_reply__with_detail, status=http_status))
+        status, fault = client.service.f(
+            __inject=dict(reply=_fault_reply__with_detail, status=http_status)
+        )
         assert status == http.client.INTERNAL_SERVER_ERROR
         _test_fault(fault, True)
 
-    status, fault = client.service.f(__inject=dict(
-        reply=_fault_reply__with_detail, status=http.client.BAD_REQUEST))
+    status, fault = client.service.f(
+        __inject=dict(reply=_fault_reply__with_detail, status=http.client.BAD_REQUEST)
+    )
     assert status == http.client.BAD_REQUEST
     assert fault == "injected reply"
 
-    status, fault = client.service.f(__inject=dict(
-        reply=_fault_reply__with_detail, status=http.client.BAD_REQUEST,
-        description="haleluja"))
+    status, fault = client.service.f(
+        __inject=dict(
+            reply=_fault_reply__with_detail,
+            status=http.client.BAD_REQUEST,
+            description="haleluja",
+        )
+    )
     assert status == http.client.BAD_REQUEST
     assert fault == "haleluja"
 
@@ -410,8 +537,11 @@ def test_reply_error_without_detail_with_fault(monkeypatch):
         assert e.document.__class__ is suds.sax.document.Document
         assert str(e) == "Server raised fault: 'Dummy error.'"
 
-    inject = dict(reply=_fault_reply__with_detail, status=http.client.BAD_REQUEST,
-        description="quack-quack")
+    inject = dict(
+        reply=_fault_reply__with_detail,
+        status=http.client.BAD_REQUEST,
+        description="quack-quack",
+    )
     e = pytest.raises(Exception, client.service.f, __inject=inject).value
     assert e.__class__ is Exception
     assert e.args[0][0] == http.client.BAD_REQUEST
@@ -422,30 +552,45 @@ def test_reply_error_without_detail_without_fault():
     client = tests.client_from_wsdl(_wsdl__simple, faults=False)
 
     for http_status in (http.client.OK, http.client.INTERNAL_SERVER_ERROR):
-        status, fault = client.service.f(__inject=dict(
-            reply=_fault_reply__without_detail, status=http_status))
+        status, fault = client.service.f(
+            __inject=dict(reply=_fault_reply__without_detail, status=http_status)
+        )
         assert status == http.client.INTERNAL_SERVER_ERROR
         _test_fault(fault, False)
 
-    status, fault = client.service.f(__inject=dict(
-        reply=_fault_reply__without_detail, status=http.client.BAD_REQUEST,
-        description="kung-fu-fui"))
+    status, fault = client.service.f(
+        __inject=dict(
+            reply=_fault_reply__without_detail,
+            status=http.client.BAD_REQUEST,
+            description="kung-fu-fui",
+        )
+    )
     assert status == http.client.BAD_REQUEST
     assert fault == "kung-fu-fui"
 
 
 def test_simple_bare_and_wrapped_output():
     # Prepare web service proxies.
-    client_bare = tests.client_from_wsdl(tests.wsdl_output("""\
-      <xsd:element name="fResponse" type="xsd:string" />""", "fResponse"))
-    client_wrapped = tests.client_from_wsdl(tests.wsdl_output("""\
+    client_bare = tests.client_from_wsdl(
+        tests.wsdl_output(
+            """\
+      <xsd:element name="fResponse" type="xsd:string" />""",
+            "fResponse",
+        )
+    )
+    client_wrapped = tests.client_from_wsdl(
+        tests.wsdl_output(
+            """\
       <xsd:element name="Wrapper">
         <xsd:complexType>
           <xsd:sequence>
             <xsd:element name="fResponse" type="xsd:string" />
           </xsd:sequence>
         </xsd:complexType>
-      </xsd:element>""", "Wrapper"))
+      </xsd:element>""",
+            "Wrapper",
+        )
+    )
 
     #   Make sure suds library inteprets our WSDL definitions as wrapped or
     # bare output interfaces as expected.
@@ -456,32 +601,43 @@ def test_simple_bare_and_wrapped_output():
     # results get presented the same way even though the wrapped one actually
     # has an extra wrapper element around its received output data.
     data = "The meaning of life."
-    get_response = lambda client, x : client.service.f(__inject=dict(
-        reply=suds.byte_str(x)))
+    get_response = lambda client, x: client.service.f(
+        __inject=dict(reply=suds.byte_str(x))
+    )
 
-    response_bare = get_response(client_bare, """<?xml version="1.0"?>
+    response_bare = get_response(
+        client_bare,
+        """<?xml version="1.0"?>
 <env:Envelope xmlns:env="http://schemas.xmlsoap.org/soap/envelope/">
   <env:Body>
     <fResponse xmlns="my-namespace">%s</fResponse>
   </env:Body>
-</env:Envelope>""" % data)
+</env:Envelope>"""
+        % data,
+    )
     assert response_bare.__class__ is suds.sax.text.Text
     assert response_bare == data
 
-    response_wrapped = get_response(client_wrapped, """<?xml version="1.0"?>
+    response_wrapped = get_response(
+        client_wrapped,
+        """<?xml version="1.0"?>
 <env:Envelope xmlns:env="http://schemas.xmlsoap.org/soap/envelope/">
   <env:Body>
     <Wrapper xmlns="my-namespace">
       <fResponse>%s</fResponse>
     </Wrapper>
   </env:Body>
-</env:Envelope>""" % data)
+</env:Envelope>"""
+        % data,
+    )
     assert response_wrapped.__class__ is suds.sax.text.Text
     assert response_wrapped == data
 
 
 def test_wrapped_sequence_output():
-    client = tests.client_from_wsdl(tests.wsdl_output("""\
+    client = tests.client_from_wsdl(
+        tests.wsdl_output(
+            """\
       <xsd:element name="Wrapper">
         <xsd:complexType>
           <xsd:sequence>
@@ -490,10 +646,16 @@ def test_wrapped_sequence_output():
             <xsd:element name="result3" type="xsd:string" />
           </xsd:sequence>
         </xsd:complexType>
-      </xsd:element>""", "Wrapper"))
+      </xsd:element>""",
+            "Wrapper",
+        )
+    )
     assert _isOutputWrapped(client, "f")
 
-    response = client.service.f(__inject=dict(reply=suds.byte_str("""\
+    response = client.service.f(
+        __inject=dict(
+            reply=suds.byte_str(
+                """\
 <?xml version="1.0"?>
 <env:Envelope xmlns:env="http://schemas.xmlsoap.org/soap/envelope/">
   <env:Body>
@@ -503,7 +665,10 @@ def test_wrapped_sequence_output():
         <result3>Tre</result3>
     </Wrapper>
   </env:Body>
-</env:Envelope>""")))
+</env:Envelope>"""
+            )
+        )
+    )
 
     #   Composite replies always get unmarshalled as a dynamically constructed
     # class named 'reply'.
@@ -547,7 +712,8 @@ def _test_fault(fault, has_detail):
     assert not has_detail or _attibutes(fault.detail) == set(("errorcode",))
 
 
-_fault_reply__with_detail = suds.byte_str("""\
+_fault_reply__with_detail = suds.byte_str(
+    """\
 <?xml version="1.0"?>
 <env:Envelope xmlns:env="http://schemas.xmlsoap.org/soap/envelope/">
   <env:Body>
@@ -560,9 +726,11 @@ _fault_reply__with_detail = suds.byte_str("""\
     </env:Fault>
   </env:Body>
 </env:Envelope>
-""")
+"""
+)
 
-_fault_reply__without_detail = suds.byte_str("""\
+_fault_reply__without_detail = suds.byte_str(
+    """\
 <?xml version="1.0"?>
 <env:Envelope xmlns:env="http://schemas.xmlsoap.org/soap/envelope/">
   <env:Body>
@@ -572,9 +740,11 @@ _fault_reply__without_detail = suds.byte_str("""\
     </env:Fault>
   </env:Body>
 </env:Envelope>
-""")
+"""
+)
 
-_wsdl__simple = tests.wsdl_output("""\
+_wsdl__simple = tests.wsdl_output(
+    """\
       <xsd:element name="fResponse">
         <xsd:complexType>
           <xsd:sequence>
@@ -582,4 +752,6 @@ _wsdl__simple = tests.wsdl_output("""\
             <xsd:element name="output_s" type="xsd:string" />
           </xsd:sequence>
         </xsd:complexType>
-      </xsd:element>""", "fResponse")
+      </xsd:element>""",
+    "fResponse",
+)

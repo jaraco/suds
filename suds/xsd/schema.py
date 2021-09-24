@@ -34,6 +34,7 @@ from suds.sax.element import Element
 from suds.sax import splitPrefix, Namespace
 
 from logging import getLogger
+
 log = getLogger(__name__)
 
 
@@ -92,9 +93,9 @@ class SchemaCollection(UnicodeMixin):
             child.open_imports(options)
         for child in self.children:
             child.dereference()
-        log.debug('loaded:\n%s', self)
+        log.debug("loaded:\n%s", self)
         merged = self.merge()
-        log.debug('MERGED:\n%s', merged)
+        log.debug("MERGED:\n%s", merged)
         return merged
 
     def autoblend(self):
@@ -107,14 +108,14 @@ class SchemaCollection(UnicodeMixin):
         namespaces = list(self.namespaces.keys())
         for s in self.children:
             for ns in namespaces:
-                tns = s.root.get('targetNamespace')
+                tns = s.root.get("targetNamespace")
                 if tns == ns:
                     continue
-                for imp in s.root.getChildren('import'):
-                    if imp.get('namespace') == ns:
+                for imp in s.root.getChildren("import"):
+                    if imp.get("namespace") == ns:
                         continue
-                imp = Element('import', ns=Namespace.xsdns)
-                imp.set('namespace', ns)
+                imp = Element("import", ns=Namespace.xsdns)
+                imp.set("namespace", ns)
                 s.root.append(imp)
         return self
 
@@ -147,10 +148,10 @@ class SchemaCollection(UnicodeMixin):
         return len(self.children)
 
     def __unicode__(self):
-        result = ['\nschema collection']
+        result = ["\nschema collection"]
         for s in self.children:
             result.append(s.str(1))
-        return '\n'.join(result)
+        return "\n".join(result)
 
 
 class Schema(UnicodeMixin):
@@ -184,7 +185,7 @@ class Schema(UnicodeMixin):
     @type form_qualified: bool
     """
 
-    Tag = 'schema'
+    Tag = "schema"
 
     def __init__(self, root, baseurl, options, container=None):
         """
@@ -212,17 +213,17 @@ class Schema(UnicodeMixin):
         self.agrps = {}
         if options.doctor is not None:
             options.doctor.examine(root)
-        form = self.root.get('elementFormDefault')
+        form = self.root.get("elementFormDefault")
         if form is None:
             self.form_qualified = False
         else:
-            self.form_qualified = ( form == 'qualified' )
+            self.form_qualified = form == "qualified"
         if container is None:
             self.build()
             self.open_imports(options)
-            log.debug('built:\n%s', self)
+            log.debug("built:\n%s", self)
             self.dereference()
-            log.debug('dereferenced:\n%s', self)
+            log.debug("dereferenced:\n%s", self)
 
     def mktns(self):
         """
@@ -231,7 +232,7 @@ class Schema(UnicodeMixin):
             targetNamespace value.
         @rtype: (prefix, uri)
         """
-        tns = [None, self.root.get('targetNamespace')]
+        tns = [None, self.root.get("targetNamespace")]
         if tns[1] is not None:
             tns[0] = self.root.findPrefix(tns[1])
         return tuple(tns)
@@ -302,7 +303,7 @@ class Schema(UnicodeMixin):
             if imported is None:
                 continue
             imported.open_imports(options)
-            log.debug('imported:\n%s', imported)
+            log.debug("imported:\n%s", imported)
             self.merge(imported)
 
     def dereference(self):
@@ -322,9 +323,10 @@ class Schema(UnicodeMixin):
             indexes[x] = midx
         for x, deps in deplist.sort():
             midx = indexes.get(x)
-            if midx is None: continue
+            if midx is None:
+                continue
             d = deps[midx]
-            log.debug('(%s) merging %s <== %s', self.tns[1], Repr(x), Repr(d))
+            log.debug("(%s) merging %s <== %s", self.tns[1], Repr(x), Repr(d))
             x.merge(d)
 
     def locate(self, ns):
@@ -353,7 +355,7 @@ class Schema(UnicodeMixin):
         if ref is None:
             return True
         else:
-            return ( not self.builtin(ref, context) )
+            return not self.builtin(ref, context)
 
     def builtin(self, ref, context=None):
         """
@@ -363,16 +365,16 @@ class Schema(UnicodeMixin):
         @return: True if builtin, else False.
         @rtype: bool
         """
-        w3 = 'http://www.w3.org'
+        w3 = "http://www.w3.org"
         try:
             if isqref(ref):
                 ns = ref[1]
-                return ( ref[0] in Factory.tags and ns.startswith(w3) )
+                return ref[0] in Factory.tags and ns.startswith(w3)
             if context is None:
                 context = self.root
             prefix = splitPrefix(ref)[0]
-            prefixes = context.findPrefixes(w3, 'startswith')
-            return ( prefix in prefixes and ref[0] in Factory.tags )
+            prefixes = context.findPrefixes(w3, "startswith")
+            return prefix in prefixes and ref[0] in Factory.tags
         except:
             return False
 
@@ -393,16 +395,16 @@ class Schema(UnicodeMixin):
         return Schema(root, baseurl, options)
 
     def str(self, indent=0):
-        tab = '%*s'%(indent*3, '')
+        tab = "%*s" % (indent * 3, "")
         result = []
-        result.append('%s%s' % (tab, self.id))
-        result.append('%s(raw)' % tab)
-        result.append(self.root.str(indent+1))
-        result.append('%s(model)' % tab)
+        result.append("%s%s" % (tab, self.id))
+        result.append("%s(raw)" % tab)
+        result.append(self.root.str(indent + 1))
+        result.append("%s(model)" % tab)
         for c in self.children:
-            result.append(c.str(indent+1))
-        result.append('')
-        return '\n'.join(result)
+            result.append(c.str(indent + 1))
+        result.append("")
+        return "\n".join(result)
 
     def __repr__(self):
         return '<%s tns="%s"/>' % (self.id, self.tns[1])

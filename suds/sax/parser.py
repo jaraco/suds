@@ -42,7 +42,7 @@ from xml.sax.handler import feature_external_ges
 
 
 class Handler(ContentHandler):
-    """ sax hanlder """
+    """sax hanlder"""
 
     def __init__(self):
         self.nodes = [Document()]
@@ -53,7 +53,7 @@ class Handler(ContentHandler):
         for a in attrs.getNames():
             n = str(a)
             v = str(attrs.getValue(a))
-            attribute = Attribute(n,v)
+            attribute = Attribute(n, v)
             if self.mapPrefix(node, attribute):
                 continue
             node.append(attribute)
@@ -63,11 +63,11 @@ class Handler(ContentHandler):
 
     def mapPrefix(self, node, attribute):
         skip = False
-        if attribute.name == 'xmlns':
+        if attribute.name == "xmlns":
             if len(attribute.value):
                 node.expns = str(attribute.value)
             skip = True
-        elif attribute.prefix == 'xmlns':
+        elif attribute.prefix == "xmlns":
             prefix = attribute.name
             node.nsprefixes[prefix] = str(attribute.value)
             skip = True
@@ -77,14 +77,14 @@ class Handler(ContentHandler):
         name = str(name)
         current = self.top()
         if len(current.charbuffer):
-            current.text = Text(''.join(current.charbuffer))
+            current.text = Text("".join(current.charbuffer))
         del current.charbuffer
         if len(current):
             current.trim()
         if name == current.qname():
             self.pop()
         else:
-            raise Exception('malformed document')
+            raise Exception("malformed document")
 
     def characters(self, content):
         text = str(content)
@@ -99,11 +99,11 @@ class Handler(ContentHandler):
         return self.nodes.pop()
 
     def top(self):
-        return self.nodes[len(self.nodes)-1]
+        return self.nodes[len(self.nodes) - 1]
 
 
 class Parser:
-    """ SAX Parser """
+    """SAX Parser"""
 
     @classmethod
     def saxparser(cls):
@@ -127,12 +127,12 @@ class Parser:
         if file is not None:
             sax.parse(file)
             timer.stop()
-            suds.metrics.log.debug('sax (%s) duration: %s', file, timer)
+            suds.metrics.log.debug("sax (%s) duration: %s", file, timer)
             return handler.nodes[0]
         if string is not None:
             source = InputSource(None)
             source.setByteStream(io.BytesIO(string))
             sax.parse(source)
             timer.stop()
-            suds.metrics.log.debug('%s\nsax duration: %s', string, timer)
+            suds.metrics.log.debug("%s\nsax duration: %s", string, timer)
             return handler.nodes[0]

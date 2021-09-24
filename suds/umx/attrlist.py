@@ -31,6 +31,7 @@ class AttrList:
     @ivar raw: The I{raw} attribute list.
     @type raw: list
     """
+
     def __init__(self, attributes):
         """
         @param attributes: A list of attributes
@@ -45,7 +46,8 @@ class AttrList:
         @rtype: I{generator}
         """
         for a in self.raw:
-            if self.skip(a): continue
+            if self.skip(a):
+                continue
             yield a
 
     def rlen(self):
@@ -66,7 +68,7 @@ class AttrList:
         @rtype: I{generator}
         """
         for a in self.raw:
-            if a.qname() == 'xml:lang':
+            if a.qname() == "xml:lang":
                 return a.value
             return None
 
@@ -81,8 +83,8 @@ class AttrList:
         ns = attr.namespace()
         skip = (
             Namespace.xmlns[1],
-            'http://schemas.xmlsoap.org/soap/encoding/',
-            'http://schemas.xmlsoap.org/soap/envelope/',
-            'http://www.w3.org/2003/05/soap-envelope',
+            "http://schemas.xmlsoap.org/soap/encoding/",
+            "http://schemas.xmlsoap.org/soap/envelope/",
+            "http://www.w3.org/2003/05/soap-envelope",
         )
-        return ( Namespace.xs(ns) or ns[1] in skip )
+        return Namespace.xs(ns) or ns[1] in skip

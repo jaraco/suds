@@ -27,12 +27,14 @@ from datetime import datetime as dt
 from datetime import timedelta
 import os
 from tempfile import gettempdir as tmp
+
 try:
     import pickle as pickle
 except Exception:
     import pickle
 
 from logging import getLogger
+
 log = getLogger(__name__)
 
 
@@ -49,7 +51,7 @@ class Cache:
         @return: The object, else None
         @rtype: any
         """
-        raise Exception('not-implemented')
+        raise Exception("not-implemented")
 
     def put(self, id, object):
         """
@@ -59,7 +61,7 @@ class Cache:
         @param object: The object to add.
         @type object: any
         """
-        raise Exception('not-implemented')
+        raise Exception("not-implemented")
 
     def purge(self, id):
         """
@@ -67,13 +69,13 @@ class Cache:
         @param id: A object ID.
         @type id: str
         """
-        raise Exception('not-implemented')
+        raise Exception("not-implemented")
 
     def clear(self):
         """
         Clear all objects from the cache.
         """
-        raise Exception('not-implemented')
+        raise Exception("not-implemented")
 
 
 class NoCache(Cache):
@@ -99,8 +101,9 @@ class FileCache(Cache):
     @ivar location: The directory for the cached files.
     @type location: str
     """
-    fnprefix = 'suds'
-    units = ('months', 'weeks', 'days', 'hours', 'minutes', 'seconds')
+
+    fnprefix = "suds"
+    units = ("months", "weeks", "days", "hours", "minutes", "seconds")
 
     def __init__(self, location=None, **duration):
         """
@@ -112,7 +115,7 @@ class FileCache(Cache):
         @type duration: {unit:value}
         """
         if location is None:
-            location = os.path.join(tmp(), 'suds')
+            location = os.path.join(tmp(), "suds")
         self.location = location
         self.duration = (None, 0)
         self.setduration(**duration)
@@ -124,7 +127,7 @@ class FileCache(Cache):
         @return: The suffix
         @rtype: str
         """
-        return 'gcf'
+        return "gcf"
 
     def setduration(self, **duration):
         """
@@ -138,7 +141,7 @@ class FileCache(Cache):
         if len(duration) == 1:
             arg = list(duration.items())[0]
             if not arg[0] in self.units:
-                raise Exception('must be: %s' % str(self.units))
+                raise Exception("must be: %s" % str(self.units))
             self.duration = arg
         return self
 
@@ -164,7 +167,7 @@ class FileCache(Cache):
     def put(self, id, bfr):
         try:
             fn = self.__fn(id)
-            f = self.open(fn, 'wb')
+            f = self.open(fn, "wb")
             try:
                 f.write(bfr)
             finally:
@@ -188,7 +191,7 @@ class FileCache(Cache):
         try:
             fn = self.__fn(id)
             self.validate(fn)
-            return self.open(fn, 'rb')
+            return self.open(fn, "rb")
         except Exception:
             pass
 
@@ -201,10 +204,10 @@ class FileCache(Cache):
         if self.duration[1] < 1:
             return
         created = dt.fromtimestamp(os.path.getctime(fn))
-        d = {self.duration[0]:self.duration[1]}
+        d = {self.duration[0]: self.duration[1]}
         expired = created + timedelta(**d)
         if expired < dt.now():
-            log.debug('%s expired, deleted', fn)
+            log.debug("%s expired, deleted", fn)
             os.remove(fn)
 
     def clear(self):
@@ -214,7 +217,7 @@ class FileCache(Cache):
                 continue
             if fn.startswith(self.fnprefix):
                 os.remove(path)
-                log.debug('deleted: %s', path)
+                log.debug("deleted: %s", path)
 
     def purge(self, id):
         fn = self.__fn(id)
@@ -231,7 +234,7 @@ class FileCache(Cache):
         return open(fn, *args)
 
     def checkversion(self):
-        path = os.path.join(self.location, 'version')
+        path = os.path.join(self.location, "version")
         try:
             f = self.open(path)
             version = f.read()
@@ -240,14 +243,14 @@ class FileCache(Cache):
                 raise Exception()
         except Exception:
             self.clear()
-            f = self.open(path, 'w')
+            f = self.open(path, "w")
             f.write(suds.__version__)
             f.close()
 
     def __fn(self, id):
         name = id
         suffix = self.fnsuffix()
-        fn = '%s-%s.%s' % (self.fnprefix, name, suffix)
+        fn = "%s-%s.%s" % (self.fnprefix, name, suffix)
         return os.path.join(self.location, fn)
 
 
@@ -257,7 +260,7 @@ class DocumentCache(FileCache):
     """
 
     def fnsuffix(self):
-        return 'xml'
+        return "xml"
 
     def get(self, id):
         try:
@@ -281,10 +284,11 @@ class ObjectCache(FileCache):
     @cvar protocol: The pickling protocol.
     @type protocol: int
     """
+
     protocol = 2
 
     def fnsuffix(self):
-        return 'px'
+        return "px"
 
     def get(self, id):
         try:

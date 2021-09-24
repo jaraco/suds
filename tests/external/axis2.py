@@ -14,7 +14,8 @@
 # written by: Jeff Ortel ( jortel@redhat.com )
 
 import sys
-sys.path.append('../../')
+
+sys.path.append("../../")
 
 from tests import *
 from suds import *
@@ -23,8 +24,8 @@ from datetime import datetime
 
 
 errors = 0
-url = 'http://localhost:8080/axis2/services/BasicService?wsdl'
-print('url=%s' % url)
+url = "http://localhost:8080/axis2/services/BasicService?wsdl"
+print("url=%s" % url)
 
 #
 # create a service client using the wsdl.
@@ -36,29 +37,29 @@ client = Client(url)
 #
 print(client)
 
-print('printList()')
-print(client.service.printList(['a','b']))
+print("printList()")
+print(client.service.printList(["a", "b"]))
 
 #
 # create a name object using the wsdl
 #
-print('create name')
-name = client.factory.create('ns2:Name')
-name.first = 'jeff'+chr(1234)
-name.last = 'ortel'
+print("create name")
+name = client.factory.create("ns2:Name")
+name.first = "jeff" + chr(1234)
+name.last = "ortel"
 
 print(name)
 
 #
 # create a phone object using the wsdl
 #
-print('create phone')
-phoneA = client.factory.create('ns2:Phone')
+print("create phone")
+phoneA = client.factory.create("ns2:Phone")
 phoneA.npa = 410
 phoneA.nxx = 822
 phoneA.number = 5138
 
-phoneB = client.factory.create('ns2:Phone')
+phoneB = client.factory.create("ns2:Phone")
 phoneB.npa = 919
 phoneB.nxx = 606
 phoneB.number = 4406
@@ -66,21 +67,21 @@ phoneB.number = 4406
 #
 # create a dog
 #
-dog = client.factory.create('ns2:Dog')
+dog = client.factory.create("ns2:Dog")
 print(dog)
-dog.name = 'Chance'
+dog.name = "Chance"
 dog.trained = True
 print(dog)
 
 #
 # create a person object using the wsdl
 #
-person = client.factory.create('ns2:Person')
+person = client.factory.create("ns2:Person")
 
 #
 # inspect empty person
 #
-print('{empty} person=\n%s' % person)
+print("{empty} person=\n%s" % person)
 
 person.name = name
 person.age = None
@@ -92,103 +93,103 @@ person.pets.append(dog)
 #
 # inspect person
 #
-print('person=\n%s' % person)
+print("person=\n%s" % person)
 
 #
 # add the person (using the webservice)
 #
-print('addPersion()')
+print("addPersion()")
 result = client.service.addPerson(person)
-print('\nreply(\n%s\n)\n' % result.encode('utf-8'))
+print("\nreply(\n%s\n)\n" % result.encode("utf-8"))
 
 #
 # create a new name object used to update the person
 #
-newname = client.factory.create('ns2:Name')
-newname.first = 'Todd'
+newname = client.factory.create("ns2:Name")
+newname.first = "Todd"
 newname.last = None
 
 #
 # update the person's name (using the webservice) and print return person object
 #
-print('updatePersion()')
+print("updatePersion()")
 result = client.service.updatePerson(person, newname)
-print('\nreply(\n%s\n)\n' % str(result))
+print("\nreply(\n%s\n)\n" % str(result))
 result = client.service.updatePerson(person, None)
-print('\nreply(\n%s\n)\n' % str(result))
+print("\nreply(\n%s\n)\n" % str(result))
 
 
 #
 # invoke the echo service
 #
-print('echo()')
+print("echo()")
 client.service.echo(None)
-result = client.service.echo('this is cool')
-print('\nreply( %s )\n' % str(result))
+result = client.service.echo("this is cool")
+print("\nreply( %s )\n" % str(result))
 
-print('echo() with {none}')
+print("echo() with {none}")
 result = client.service.echo(None)
-print('\nreply( %s )\n' % str(result))
+print("\nreply( %s )\n" % str(result))
 
 #
 # invoke the hello service
 #
-print('hello()')
+print("hello()")
 result = client.service.hello()
-print('\nreply( %s )\n' % str(result))
+print("\nreply( %s )\n" % str(result))
 
 #
 # invoke the testVoid service
 #
 try:
-    print('getVoid()')
+    print("getVoid()")
     result = client.service.getVoid()
-    print('\nreply( %s )\n' % str(result))
+    print("\nreply( %s )\n" % str(result))
 except Exception as e:
     print(e)
 
 #
 # test list args
 #
-print('getList(list)')
-mylist = ['my', 'dog', 'likes', 'steak']
+print("getList(list)")
+mylist = ["my", "dog", "likes", "steak"]
 result = client.service.printList(mylist)
-print('\nreply( %s )\n' % str(result))
+print("\nreply( %s )\n" % str(result))
 # tuple
-print('testListArgs(tuple)')
-mylist = ('my', 'dog', 'likes', 'steak')
+print("testListArgs(tuple)")
+mylist = ("my", "dog", "likes", "steak")
 result = client.service.printList(mylist)
-print('\nreply( %s )\n' % str(result))
+print("\nreply( %s )\n" % str(result))
 
 #
 # test list returned
 #
 for n in range(0, 3):
-    print('getList(str, %d)' % n)
-    result = client.service.getList('hello', n)
-    print('\nreply( %s )\n' % str(result))
-    assert ( isinstance(result, list) and len(result) == n )
+    print("getList(str, %d)" % n)
+    result = client.service.getList("hello", n)
+    print("\nreply( %s )\n" % str(result))
+    assert isinstance(result, list) and len(result) == n
 
-print('addPet()')
-dog = client.factory.create('ns2:Dog')
-dog.name = 'Chance'
+print("addPet()")
+dog = client.factory.create("ns2:Dog")
+dog.name = "Chance"
 dog.trained = True
 print(dog)
 try:
     result = client.service.addPet(person, dog)
-    print('\nreply( %s )\n' % str(result))
+    print("\nreply( %s )\n" % str(result))
 except Exception as e:
     print(e)
 
-print('___________________ E X C E P T I O N S __________________________')
+print("___________________ E X C E P T I O N S __________________________")
 
 #
 # test exceptions
 #
 try:
-    print('throwException() faults=True')
+    print("throwException() faults=True")
     result = client.service.throwException()
-    print('\nreply( %s )\n' % tostr(result))
+    print("\nreply( %s )\n" % tostr(result))
 except Exception as e:
     print(e)
 
@@ -196,11 +197,11 @@ except Exception as e:
 # test faults
 #
 try:
-    print('throwException() faults=False')
+    print("throwException() faults=False")
     client.set_options(faults=False)
     result = client.service.throwException()
-    print('\nreply( %s )\n' % tostr(result))
+    print("\nreply( %s )\n" % tostr(result))
 except Exception as e:
     print(e)
 
-print('\nfinished: errors=%d' % errors)
+print("\nfinished: errors=%d" % errors)

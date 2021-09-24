@@ -47,7 +47,7 @@ def client_from_wsdl(wsdl_content, *args, **kwargs):
         store = suds.store.DocumentStore()
         kwargs.update(documentStore=store)
     testFileId = "whatchamacallit"
-    store.update({testFileId:wsdl_content})
+    store.update({testFileId: wsdl_content})
     kwargs.update(cache=None)
     return suds.client.Client("suds://" + testFileId, *args, **kwargs)
 
@@ -135,6 +135,7 @@ def compare_xml_to_string(lhs, rhs):
 def runUsingPyTest(callerGlobals):
     """Run the caller test script using the pytest testing framework."""
     import sys
+
     # Trick setuptools into not recognizing we are referencing __file__ here.
     # If setuptools detects __file__ usage in a module, any package containing
     # this module will be installed as an actual folder instead of a zipped
@@ -148,8 +149,10 @@ def runUsingPyTest(callerGlobals):
         import pytest
     except ImportError:
         filename = filename or "<unknown-script>"
-        sys.exit("'py.test' unit testing framework not available. Can not run "
-            "'%s' directly as a script." % (filename,))
+        sys.exit(
+            "'py.test' unit testing framework not available. Can not run "
+            "'%s' directly as a script." % (filename,)
+        )
     exitCode = pytest.main(["--pyargs", filename] + sys.argv[1:])
     sys.exit(exitCode)
 
@@ -171,7 +174,8 @@ def wsdl_input(schema_content, *args, **kwargs):
     operation_name = kwargs.pop("operation_name", "f")
     assert not kwargs
 
-    wsdl = ["""\
+    wsdl = [
+        """\
 <?xml version='1.0' encoding='UTF-8'?>
 <wsdl:definitions targetNamespace="my-namespace"
 xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
@@ -185,14 +189,20 @@ xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/">
 %s
     </xsd:schema>
   </wsdl:types>
-  <wsdl:message name="fRequestMessage">""" % (schema_content,)]
+  <wsdl:message name="fRequestMessage">"""
+        % (schema_content,)
+    ]
 
     assert len(args) >= 1
     for arg in args:
-        wsdl.append("""\
-    <wsdl:part name="parameters" element="ns:%s" />""" % arg)
+        wsdl.append(
+            """\
+    <wsdl:part name="parameters" element="ns:%s" />"""
+            % arg
+        )
 
-    wsdl.append("""\
+    wsdl.append(
+        """\
   </wsdl:message>
   <wsdl:portType name="dummyPortType">
     <wsdl:operation name="%(name)s">
@@ -213,7 +223,9 @@ xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/">
     </wsdl:port>
   </wsdl:service>
 </wsdl:definitions>
-""" % {"name":operation_name})
+"""
+        % {"name": operation_name}
+    )
 
     return suds.byte_str("\n".join(wsdl))
 
@@ -228,7 +240,8 @@ def wsdl_output(schema_content, *args):
     parameters identify top level output parameter elements.
 
     """
-    wsdl = ["""\
+    wsdl = [
+        """\
 <?xml version='1.0' encoding='UTF-8'?>
 <wsdl:definitions targetNamespace="my-namespace"
 xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
@@ -242,14 +255,20 @@ xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/">
 %s
     </xsd:schema>
   </wsdl:types>
-  <wsdl:message name="fResponseMessage">""" % schema_content]
+  <wsdl:message name="fResponseMessage">"""
+        % schema_content
+    ]
 
     assert len(args) >= 1
     for arg in args:
-        wsdl.append("""\
-    <wsdl:part name="parameters" element="ns:%s" />""" % arg)
+        wsdl.append(
+            """\
+    <wsdl:part name="parameters" element="ns:%s" />"""
+            % arg
+        )
 
-    wsdl.append("""\
+    wsdl.append(
+        """\
   </wsdl:message>
   <wsdl:portType name="dummyPortType">
     <wsdl:operation name="f">
@@ -270,6 +289,7 @@ xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/">
     </wsdl:port>
   </wsdl:service>
 </wsdl:definitions>
-""")
+"""
+    )
 
     return suds.byte_str("\n".join(wsdl))

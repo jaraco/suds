@@ -22,6 +22,7 @@ Implemented using the 'pytest' testing framework.
 
 if __name__ == "__main__":
     from . import __init__
+
     __init__.runUsingPyTest(globals())
 
 
@@ -36,14 +37,18 @@ import datetime
 class TestFixedOffsetTimezone:
     """Tests for the suds.sax.date.FixedOffsetTimezone class."""
 
-    @pytest.mark.parametrize(("h", "m", "name"), (
-        (-13, 0, "-13:00"),
-        (-5, 0, "-05:00"),
-        (0, 0, "+00:00"),
-        (5, 0, "+05:00"),
-        (13, 0, "+13:00"),
-        (5, 50, "+05:50"),
-        (-4, 31, "-04:31")))
+    @pytest.mark.parametrize(
+        ("h", "m", "name"),
+        (
+            (-13, 0, "-13:00"),
+            (-5, 0, "-05:00"),
+            (0, 0, "+00:00"),
+            (5, 0, "+05:00"),
+            (13, 0, "+13:00"),
+            (5, 50, "+05:50"),
+            (-4, 31, "-04:31"),
+        ),
+    )
     def test(self, h, m, name):
         tz_delta = datetime.timedelta(hours=h, minutes=m)
         tz = FixedOffsetTimezone(tz_delta)
@@ -52,12 +57,16 @@ class TestFixedOffsetTimezone:
         assert tz.tzname(None) == name
         assert str(tz) == "FixedOffsetTimezone " + name
 
-    @pytest.mark.parametrize(("h", "m", "s", "us"), (
-        (-22, 10, 1, 0),
-        (-5, 0, 59, 0),
-        (0, 0, 0, 1),
-        (12, 12, 0, 120120),
-        (12, 12, 0, 999999)))
+    @pytest.mark.parametrize(
+        ("h", "m", "s", "us"),
+        (
+            (-22, 10, 1, 0),
+            (-5, 0, 59, 0),
+            (0, 0, 0, 1),
+            (12, 12, 0, 120120),
+            (12, 12, 0, 999999),
+        ),
+    )
     def testTooPreciseOffset(self, h, m, s, us):
         o = datetime.timedelta(hours=h, minutes=m, seconds=s, microseconds=us)
         pytest.raises(ValueError, FixedOffsetTimezone, o)

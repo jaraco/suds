@@ -14,7 +14,8 @@
 # written by: Jeff Ortel ( jortel@redhat.com )
 
 import sys
-sys.path.append('../../')
+
+sys.path.append("../../")
 
 import traceback as tb
 import suds.metrics as metrics
@@ -28,11 +29,12 @@ errors = 0
 
 def start(url):
     global errors
-    print('\n________________________________________________________________\n')
-    print('Test @ ( %s ) %d' % (url, errors))
+    print("\n________________________________________________________________\n")
+    print("Test @ ( %s ) %d" % (url, errors))
+
 
 try:
-    url = 'http://mssoapinterop.org/asmx/simple.asmx?WSDL'
+    url = "http://mssoapinterop.org/asmx/simple.asmx?WSDL"
     start(url)
     client = Client(url)
     print(client)
@@ -40,28 +42,28 @@ try:
     input = "42"
     d = dict(inputString=input)
     result = client.service.echoString(**d)
-    print('echoString() = %s' % result)
+    print("echoString() = %s" % result)
     assert result == input
     # int
     input = 42
     result = client.service.echoInteger(input)
-    print('echoInteger() = %s' % result)
+    print("echoInteger() = %s" % result)
     assert result == input
     # float
     input = 4.2
     result = client.service.echoFloat(input)
-    print('echoFloat() = %s' % result)
+    print("echoFloat() = %s" % result)
     assert result == input
     # suds 0.3.8+
     result = client.service.echoIntegerArray([])
-    print('echoIntegerArray() = %s' % result)
+    print("echoIntegerArray() = %s" % result)
     assert result is None
-    input = [1,2,3,4]
+    input = [1, 2, 3, 4]
     result = client.service.echoIntegerArray(input)
-    print('echoIntegerArray() = %s' % result)
+    print("echoIntegerArray() = %s" % result)
     assert result == input
     result = client.service.echoIntegerArray(inputIntegerArray=input)
-    print('echoIntegerArray() = %s' % result)
+    print("echoIntegerArray() = %s" % result)
     assert result == input
 except WebFault as f:
     errors += 1
@@ -73,13 +75,13 @@ except Exception as e:
     tb.print_exc()
 
 try:
-    url = 'http://jira.atlassian.com/rpc/soap/jirasoapservice-v2?wsdl'
+    url = "http://jira.atlassian.com/rpc/soap/jirasoapservice-v2?wsdl"
     start(url)
     client = Client(url)
     print(client)
-    token = client.service.login('soaptester', 'soaptester')
+    token = client.service.login("soaptester", "soaptester")
     print('token="%s"' % token)
-    user = client.service.getUser(token, 'soaptester')
+    user = client.service.getUser(token, "soaptester")
     print('user="%s"' % user)
 except WebFault as f:
     errors += 1
@@ -91,13 +93,13 @@ except Exception as e:
     tb.print_exc()
 
 try:
-    url = 'http://jira.atlassian.com/rpc/soap/jirasoapservice-v2?wsdl'
-    start(url+'  ** cloned **')
+    url = "http://jira.atlassian.com/rpc/soap/jirasoapservice-v2?wsdl"
+    start(url + "  ** cloned **")
     client = Client(url).clone()
-    print('**clone**\n%s' % client)
-    token = client.service.login('soaptester', 'soaptester')
+    print("**clone**\n%s" % client)
+    token = client.service.login("soaptester", "soaptester")
     print('**clone** token="%s"' % token)
-    user = client.service.getUser(token, 'soaptester')
+    user = client.service.getUser(token, "soaptester")
     print('**clone** user="%s"' % user)
 except WebFault as f:
     errors += 1
@@ -109,7 +111,7 @@ except Exception as e:
     tb.print_exc()
 
 try:
-    url = ' http://www.boyzoid.com/comp/randomQuote.cfc?wsdl '
+    url = " http://www.boyzoid.com/comp/randomQuote.cfc?wsdl "
     start(url)
     client = Client(url)
     print(client)
@@ -124,16 +126,16 @@ except Exception as e:
     tb.print_exc()
 
 try:
-    url = 'http://www.zenfolio.com/zf/api/zfapi.asmx?wsdl'
+    url = "http://www.zenfolio.com/zf/api/zfapi.asmx?wsdl"
     start(url)
     client = Client(url)
     print(client)
-    #client.setport(0)
-    group = client.factory.create('Group')
-    print('Group:\n%s' % group)
+    # client.setport(0)
+    group = client.factory.create("Group")
+    print("Group:\n%s" % group)
     print('LoadGroupHierarchy("demo")')
     groupHierarchy = client.service.LoadGroupHierarchy("demo")
-    print('result:\n%s' % groupHierarchy)
+    print("result:\n%s" % groupHierarchy)
 except WebFault as f:
     errors += 1
     print(f)
@@ -144,12 +146,12 @@ except Exception as e:
     tb.print_exc()
 
 try:
-    url = 'http://cert.synxis.com/interface/ChannelConnect.asmx?WSDL'
+    url = "http://cert.synxis.com/interface/ChannelConnect.asmx?WSDL"
     start(url)
     client = Client(url)
     print(client)
-    #client.setport(0)
-    tpa = client.factory.create('ns1:TPA_Extensions')
+    # client.setport(0)
+    tpa = client.factory.create("ns1:TPA_Extensions")
     print(client.service.Ping(tpa, "hello"))
 except WebFault as f:
     errors += 1
@@ -161,11 +163,11 @@ except Exception as e:
     tb.print_exc()
 
 try:
-    url = 'https://sec.neurofuzz-software.com/paos/genSSHA-SOAP.php?wsdl'
+    url = "https://sec.neurofuzz-software.com/paos/genSSHA-SOAP.php?wsdl"
     start(url)
     client = Client(url)
     print(client)
-    print(client.service.genSSHA('hello', 'sha1'))
+    print(client.service.genSSHA("hello", "sha1"))
 except WebFault as f:
     errors += 1
     print(f)
@@ -176,13 +178,13 @@ except Exception as e:
     tb.print_exc()
 
 try:
-    url = 'http://ap1314-dsr.compmed.ucdavis.edu/dataserver/Aperio.Images/Image?method=wsdl'
+    url = "http://ap1314-dsr.compmed.ucdavis.edu/dataserver/Aperio.Images/Image?method=wsdl"
     start(url)
     client = Client(url)
-    #print client.factory.resolver.schema
+    # print client.factory.resolver.schema
     print(client)
-    print('Logon()')
-    reply = client.service.Logon('testuser','test')
+    print("Logon()")
+    reply = client.service.Logon("testuser", "test")
     print(reply)
 except WebFault as f:
     errors += 1
@@ -194,7 +196,7 @@ except Exception as e:
     tb.print_exc()
 
 try:
-    url = 'http://soa.ebrev.info/service.wsdl'
+    url = "http://soa.ebrev.info/service.wsdl"
     start(url)
     client = Client(url)
     print(client)
@@ -208,13 +210,13 @@ except Exception as e:
     tb.print_exc()
 
 try:
-    url = 'http://arcweb.esri.com/services/v2/MapImage.wsdl'
+    url = "http://arcweb.esri.com/services/v2/MapImage.wsdl"
     start(url)
     client = Client(url)
     print(client)
-    env = client.factory.create('ns2:Envelope')
+    env = client.factory.create("ns2:Envelope")
     print(env)
-    options = client.factory.create('ns4:MapImageOptions')
+    options = client.factory.create("ns4:MapImageOptions")
     print(options)
 except WebFault as f:
     errors += 1
@@ -230,7 +232,7 @@ try:
     start(url)
     client = Client(url)
     print(client)
-    #client.setport(0)
+    # client.setport(0)
     print(client.service.getBank("76251020"))
 except WebFault as f:
     errors += 1
@@ -262,14 +264,14 @@ try:
     start(url)
     timer.start()
     client = Client(url)
-    #client.setport(0)
+    # client.setport(0)
     timer.stop()
-    print('create client: %s' % timer)
+    print("create client: %s" % timer)
     timer.start()
     s = str(client)
     timer.stop()
-    print('str(client): %s' % timer)
-    print('client:\n%s' % s)
+    print("str(client): %s" % timer)
+    print("client:\n%s" % s)
 except WebFault as f:
     errors += 1
     print(f)
@@ -279,4 +281,4 @@ except Exception as e:
     print(e)
     tb.print_exc()
 
-print('\nFinished: errors = %d' % errors)
+print("\nFinished: errors = %d" % errors)

@@ -23,6 +23,7 @@ wsdl/xsd defined types.
 from suds import *
 
 from logging import getLogger
+
 log = getLogger(__name__)
 
 
@@ -50,6 +51,7 @@ def asdict(sobject):
     """
     return dict(items(sobject))
 
+
 def merge(a, b):
     """
     Merge all attributes and metadata from I{a} to I{b}.
@@ -63,6 +65,7 @@ def merge(a, b):
         b.__metadata__ = b.__metadata__
     return b
 
+
 def footprint(sobject):
     """
     Get the I{virtual footprint} of the object.
@@ -75,14 +78,16 @@ def footprint(sobject):
     n = 0
     for a in sobject.__keylist__:
         v = getattr(sobject, a)
-        if v is None: continue
+        if v is None:
+            continue
         if isinstance(v, Object):
             n += footprint(v)
             continue
-        if hasattr(v, '__len__'):
-            if len(v): n += 1
+        if hasattr(v, "__len__"):
+            if len(v):
+                n += 1
             continue
-        n +=1
+        n += 1
     return n
 
 
@@ -96,7 +101,7 @@ class Factory:
             bases = (bases,)
         # name is type unicode in python 2 -> not accepted by the type()
         name = str(name)
-        key = '.'.join((name, str(bases)))
+        key = ".".join((name, str(bases)))
         subclass = cls.cache.get(key)
         if subclass is None:
             subclass = type(name, bases, dict)
@@ -125,23 +130,21 @@ class Factory:
 
 
 class Object(UnicodeMixin):
-
     def __init__(self):
         self.__keylist__ = []
         self.__printer__ = Printer()
         self.__metadata__ = Metadata()
 
     def __setattr__(self, name, value):
-        builtin = name.startswith('__') and name.endswith('__')
-        if not builtin and \
-            name not in self.__keylist__:
+        builtin = name.startswith("__") and name.endswith("__")
+        if not builtin and name not in self.__keylist__:
             self.__keylist__.append(name)
         self.__dict__[name] = value
 
     def __delattr__(self, name):
         try:
             del self.__dict__[name]
-            builtin = name.startswith('__') and name.endswith('__')
+            builtin = name.startswith("__") and name.endswith("__")
             if not builtin:
                 self.__keylist__.remove(name)
         except:
@@ -173,7 +176,6 @@ class Object(UnicodeMixin):
 
 
 class Iter:
-
     def __init__(self, sobject):
         self.sobject = sobject
         self.keylist = self.__keylist(sobject)
@@ -198,9 +200,8 @@ class Iter:
             ordered = set(ordering)
             if not ordered.issuperset(keyset):
                 log.debug(
-                    '%s must be superset of %s, ordering ignored',
-                    keylist,
-                    ordering)
+                    "%s must be superset of %s, ordering ignored", keylist, ordering
+                )
                 raise KeyError()
             return ordering
         except:
@@ -224,14 +225,13 @@ class Facade(Object):
 
 
 class Property(Object):
-
     def __init__(self, value):
         Object.__init__(self)
         self.value = value
 
     def items(self):
         for item in self:
-            if item[0] != 'value':
+            if item[0] != "value":
                 yield item
 
     def get(self):
@@ -248,121 +248,124 @@ class Printer:
     """
 
     @classmethod
-    def indent(cls, n): return '%*s'%(n*3,' ')
+    def indent(cls, n):
+        return "%*s" % (n * 3, " ")
 
     def tostr(self, object, indent=-2):
-        """ get s string representation of object """
+        """get s string representation of object"""
         history = []
         return self.process(object, history, indent)
 
     def process(self, object, h, n=0, nl=False):
-        """ print object using the specified indent (n) and newline (nl). """
+        """print object using the specified indent (n) and newline (nl)."""
         if object is None:
-            return 'None'
+            return "None"
         if isinstance(object, Object):
             if len(object) == 0:
-                return '<empty>'
-            return self.print_object(object, h, n+2, nl)
+                return "<empty>"
+            return self.print_object(object, h, n + 2, nl)
         if isinstance(object, dict):
             if len(object) == 0:
-                return '<empty>'
-            return self.print_dictionary(object, h, n+2, nl)
-        if isinstance(object, (list,tuple)):
+                return "<empty>"
+            return self.print_dictionary(object, h, n + 2, nl)
+        if isinstance(object, (list, tuple)):
             if len(object) == 0:
-                return '<empty>'
-            return self.print_collection(object, h, n+2)
+                return "<empty>"
+            return self.print_collection(object, h, n + 2)
         if isinstance(object, str):
             return '"%s"' % tostr(object)
-        return '%s' % tostr(object)
+        return "%s" % tostr(object)
 
     def print_object(self, d, h, n, nl=False):
-        """ print complex using the specified indent (n) and newline (nl). """
+        """print complex using the specified indent (n) and newline (nl)."""
         s = []
         cls = d.__class__
         if d in h:
-            s.append('(')
+            s.append("(")
             s.append(cls.__name__)
-            s.append(')')
-            s.append('...')
-            return ''.join(s)
+            s.append(")")
+            s.append("...")
+            return "".join(s)
         h.append(d)
         if nl:
-            s.append('\n')
+            s.append("\n")
             s.append(self.indent(n))
         if cls != Object:
-            s.append('(')
+            s.append("(")
             if isinstance(d, Facade):
                 s.append(d.__metadata__.facade)
             else:
                 s.append(cls.__name__)
-            s.append(')')
-        s.append('{')
+            s.append(")")
+        s.append("{")
         for item in d:
             if self.exclude(d, item):
                 continue
             item = self.unwrap(d, item)
-            s.append('\n')
-            s.append(self.indent(n+1))
-            if isinstance(item[1], (list,tuple)):
+            s.append("\n")
+            s.append(self.indent(n + 1))
+            if isinstance(item[1], (list, tuple)):
                 s.append(item[0])
-                s.append('[]')
+                s.append("[]")
             else:
                 s.append(item[0])
-            s.append(' = ')
+            s.append(" = ")
             s.append(self.process(item[1], h, n, True))
-        s.append('\n')
+        s.append("\n")
         s.append(self.indent(n))
-        s.append('}')
+        s.append("}")
         h.pop()
-        return ''.join(s)
+        return "".join(s)
 
     def print_dictionary(self, d, h, n, nl=False):
-        """ print complex using the specified indent (n) and newline (nl). """
-        if d in h: return '{}...'
+        """print complex using the specified indent (n) and newline (nl)."""
+        if d in h:
+            return "{}..."
         h.append(d)
         s = []
         if nl:
-            s.append('\n')
+            s.append("\n")
             s.append(self.indent(n))
-        s.append('{')
+        s.append("{")
         for item in list(d.items()):
-            s.append('\n')
-            s.append(self.indent(n+1))
-            if isinstance(item[1], (list,tuple)):
+            s.append("\n")
+            s.append(self.indent(n + 1))
+            if isinstance(item[1], (list, tuple)):
                 s.append(tostr(item[0]))
-                s.append('[]')
+                s.append("[]")
             else:
                 s.append(tostr(item[0]))
-            s.append(' = ')
+            s.append(" = ")
             s.append(self.process(item[1], h, n, True))
-        s.append('\n')
+        s.append("\n")
         s.append(self.indent(n))
-        s.append('}')
+        s.append("}")
         h.pop()
-        return ''.join(s)
+        return "".join(s)
 
     def print_collection(self, c, h, n):
-        """ print collection using the specified indent (n) and newline (nl). """
-        if c in h: return '[]...'
+        """print collection using the specified indent (n) and newline (nl)."""
+        if c in h:
+            return "[]..."
         h.append(c)
         s = []
         for item in c:
-            s.append('\n')
+            s.append("\n")
             s.append(self.indent(n))
-            s.append(self.process(item, h, n-2))
-            s.append(',')
+            s.append(self.process(item, h, n - 2))
+            s.append(",")
         h.pop()
-        return ''.join(s)
+        return "".join(s)
 
     def unwrap(self, d, item):
-        """ translate (unwrap) using an optional wrapper function """
+        """translate (unwrap) using an optional wrapper function"""
         nopt = lambda x: x
         try:
             md = d.__metadata__
-            pmd = getattr(md, '__print__', None)
+            pmd = getattr(md, "__print__", None)
             if pmd is None:
                 return item
-            wrappers = getattr(pmd, 'wrappers', {})
+            wrappers = getattr(pmd, "wrappers", {})
             fn = wrappers.get(item[0], nopt)
             return (item[0], fn(item[1]))
         except:
@@ -370,14 +373,14 @@ class Printer:
         return item
 
     def exclude(self, d, item):
-        """ check metadata for excluded items """
+        """check metadata for excluded items"""
         try:
             md = d.__metadata__
-            pmd = getattr(md, '__print__', None)
+            pmd = getattr(md, "__print__", None)
             if pmd is None:
                 return False
-            excludes = getattr(pmd, 'excludes', [])
-            return ( item[0] in excludes )
+            excludes = getattr(pmd, "excludes", [])
+            return item[0] in excludes
         except:
             pass
         return False

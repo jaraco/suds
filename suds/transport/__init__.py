@@ -58,7 +58,11 @@ class Request(UnicodeMixin):
 URL: %s
 HEADERS: %s
 MESSAGE:
-%s""" % (self.url, self.headers, self.message)
+%s""" % (
+            self.url,
+            self.headers,
+            self.message,
+        )
 
 
 class Reply(UnicodeMixin):
@@ -93,7 +97,11 @@ class Reply(UnicodeMixin):
 CODE: %s
 HEADERS: %s
 MESSAGE:
-%s""" % (self.code, self.headers, self.message)
+%s""" % (
+            self.code,
+            self.headers,
+            self.message,
+        )
 
 
 class Transport:
@@ -101,6 +109,7 @@ class Transport:
 
     def __init__(self):
         from suds.transport.options import Options
+
         self.options = Options()
 
     def open(self, request):
@@ -114,7 +123,7 @@ class Transport:
         @raise TransportError: On all transport errors.
 
         """
-        raise Exception('not-implemented')
+        raise Exception("not-implemented")
 
     def send(self, request):
         """
@@ -132,4 +141,4 @@ class Transport:
         @raise TransportError: On all transport errors.
 
         """
-        raise Exception('not-implemented')
+        raise Exception("not-implemented")

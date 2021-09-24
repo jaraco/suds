@@ -53,6 +53,7 @@ class Document(Binding):
     individually instead of as a single I{document} object.
 
     """
+
     def bodycontent(self, method, args, kwargs):
         if not len(method.soap.input.body.parts):
             return ()
@@ -74,7 +75,7 @@ class Document(Binding):
             # defined inside a choice order indicator. An empty choice
             # parameter can still be included in the constructed request by
             # explicitly providing an empty string value for it.
-            #TODO: This functionality might be better placed inside the
+            # TODO: This functionality might be better placed inside the
             # mkparam() function but to do that we would first need to better
             # understand how different Binding subclasses in suds work and how
             # they would be affected by this change.
@@ -91,8 +92,14 @@ class Document(Binding):
                 p.setPrefix(ns[0], ns[1])
             root.append(p)
 
-        parse_args(method.name, self.param_defs(method), args, kwargs,
-            add_param, self.options().extraArgumentErrors)
+        parse_args(
+            method.name,
+            self.param_defs(method),
+            args,
+            kwargs,
+            add_param,
+            self.options().extraArgumentErrors,
+        )
 
         return root
 

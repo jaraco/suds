@@ -30,6 +30,7 @@ import urllib.request, urllib.error, urllib.parse
 from urllib.parse import urlparse
 
 from logging import getLogger
+
 log = getLogger(__name__)
 
 
@@ -61,7 +62,7 @@ class HttpTransport(Transport):
     def open(self, request):
         try:
             url = self.__get_request_url(request)
-            log.debug('opening (%s)', url)
+            log.debug("opening (%s)", url)
             u2request = urllib.request.Request(url)
             self.proxy = self.options.proxy
             return self.u2open(u2request)
@@ -78,7 +79,7 @@ class HttpTransport(Transport):
             self.addcookies(u2request)
             self.proxy = self.options.proxy
             request.headers.update(u2request.headers)
-            log.debug('sending:\n%s', request)
+            log.debug("sending:\n%s", request)
             fp = self.u2open(u2request)
             self.getcookies(fp, u2request)
             if sys.version_info < (3, 0):
@@ -86,7 +87,7 @@ class HttpTransport(Transport):
             else:
                 headers = fp.headers
             result = Reply(http.client.OK, headers, fp.read())
-            log.debug('received:\n%s', result)
+            log.debug("received:\n%s", result)
         except urllib.error.HTTPError as e:
             if e.code in (http.client.ACCEPTED, http.client.NO_CONTENT):
                 result = None
@@ -163,8 +164,8 @@ class HttpTransport(Transport):
         @rtype: float
         """
         try:
-            part = urllib2.__version__.split('.', 1)
-            return float('.'.join(part))
+            part = urllib2.__version__.split(".", 1)
+            return float(".".join(part))
         except Exception as e:
             log.exception(e)
             return 0
@@ -241,14 +242,14 @@ class HttpAuthenticated(HttpTransport):
     def addcredentials(self, request):
         credentials = self.credentials()
         if not (None in credentials):
-            credentials = ':'.join(credentials)
-            if sys.version_info < (3,0):
-                basic = 'Basic %s' % base64.b64encode(credentials)
+            credentials = ":".join(credentials)
+            if sys.version_info < (3, 0):
+                basic = "Basic %s" % base64.b64encode(credentials)
             else:
                 encodedBytes = base64.urlsafe_b64encode(credentials.encode())
                 encodedString = encodedBytes.decode()
-                basic = 'Basic %s' % encodedString
-            request.headers['Authorization'] = basic
+                basic = "Basic %s" % encodedString
+            request.headers["Authorization"] = basic
 
     def credentials(self):
         return self.options.username, self.options.password

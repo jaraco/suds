@@ -35,6 +35,7 @@ class Attribute(UnicodeMixin):
     @ivar value: The attribute's value
     @type value: basestring
     """
+
     def __init__(self, name, value=None):
         """
         @param name: The attribute's name with I{optional} namespace prefix.
@@ -67,7 +68,7 @@ class Attribute(UnicodeMixin):
         if self.prefix is None:
             return self.name
         else:
-            return ':'.join((self.prefix, self.name))
+            return ":".join((self.prefix, self.name))
 
     def setValue(self, value):
         """
@@ -83,7 +84,7 @@ class Attribute(UnicodeMixin):
             self.value = Text(value)
         return self
 
-    def getValue(self, default=Text('')):
+    def getValue(self, default=Text("")):
         """
         Get the attributes value with optional default.
         @param default: An optional value to be return when the
@@ -104,7 +105,7 @@ class Attribute(UnicodeMixin):
         @return: True when has I{text}.
         @rtype: boolean
         """
-        return ( self.value is not None and len(self.value) )
+        return self.value is not None and len(self.value)
 
     def namespace(self):
         """
@@ -144,28 +145,32 @@ class Attribute(UnicodeMixin):
         if name is None:
             byname = True
         else:
-            byname = ( self.name == name )
+            byname = self.name == name
         if ns is None:
             byns = True
         else:
-            byns = ( self.namespace()[1] == ns[1] )
-        return ( byname and byns )
+            byns = self.namespace()[1] == ns[1]
+        return byname and byns
 
     def __eq__(self, rhs):
-        """ equals operator """
-        return rhs is not None and \
-            isinstance(rhs, Attribute) and \
-            self.prefix == rhs.name and \
-            self.name == rhs.name
+        """equals operator"""
+        return (
+            rhs is not None
+            and isinstance(rhs, Attribute)
+            and self.prefix == rhs.name
+            and self.name == rhs.name
+        )
 
     def __repr__(self):
-        """ get a string representation """
-        return \
-            'attr (prefix=%s, name=%s, value=(%s))' %\
-                (self.prefix, self.name, self.value)
+        """get a string representation"""
+        return "attr (prefix=%s, name=%s, value=(%s))" % (
+            self.prefix,
+            self.name,
+            self.value,
+        )
 
     def __unicode__(self):
-        """ get an xml string representation """
+        """get an xml string representation"""
         n = self.qname()
         if self.hasText():
             v = self.value.escape()

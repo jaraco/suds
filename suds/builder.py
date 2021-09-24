@@ -23,7 +23,7 @@ from suds.sudsobject import Factory
 
 
 class Builder:
-    """ Builder used to construct an object for types defined in the schema """
+    """Builder used to construct an object for types defined in the schema"""
 
     def __init__(self, resolver):
         """
@@ -33,7 +33,7 @@ class Builder:
         self.resolver = resolver
 
     def build(self, name):
-        """ build a an object for the specified typename as defined in the schema """
+        """build a an object for the specified typename as defined in the schema"""
         if isinstance(name, str):
             type = self.resolver.find(name)
             if type is None:
@@ -58,7 +58,7 @@ class Builder:
         return data
 
     def process(self, data, type, history):
-        """ process the specified type then process its children """
+        """process the specified type then process its children"""
         if type in history:
             return
         if type.enum():
@@ -90,28 +90,29 @@ class Builder:
                 self.process(data, child, history[:])
 
     def add_attributes(self, data, type):
-        """ add required attributes """
+        """add required attributes"""
         for attr, ancestry in type.attributes():
-            name = '_%s' % attr.name
+            name = "_%s" % attr.name
             value = attr.get_default()
             setattr(data, name, value)
 
     def skip_child(self, child, ancestry):
-        """ get whether or not to skip the specified child """
-        if child.any(): return True
+        """get whether or not to skip the specified child"""
+        if child.any():
+            return True
         for x in ancestry:
             if x.choice():
                 return True
         return False
 
     def ordering(self, type):
-        """ get the ordering """
+        """get the ordering"""
         result = []
         for child, ancestry in type.resolve():
             name = child.name
             if child.name is None:
                 continue
             if child.isattr():
-                name = '_%s' % child.name
+                name = "_%s" % child.name
             result.append(name)
         return result

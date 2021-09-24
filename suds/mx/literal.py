@@ -27,6 +27,7 @@ from suds.sax.element import Element
 from suds.sudsobject import Factory
 
 from logging import getLogger
+
 log = getLogger(__name__)
 
 
@@ -36,9 +37,9 @@ log = getLogger(__name__)
 # real = The 'true' XSD type
 # ancestry = The 'type' ancestry
 #
-Content.extensions.append('type')
-Content.extensions.append('real')
-Content.extensions.append('ancestry')
+Content.extensions.append("type")
+Content.extensions.append("real")
+Content.extensions.append("ancestry")
 
 
 class Typed(Core):
@@ -76,11 +77,11 @@ class Typed(Core):
         # 'content' value is both translated and sorted based on the XSD type.
         # Only values that are objects have their attributes sorted.
         #
-        log.debug('starting content:\n%s', content)
+        log.debug("starting content:\n%s", content)
         if content.type is None:
             name = content.tag
-            if name.startswith('_'):
-                name = '@' + name[1:]
+            if name.startswith("_"):
+                name = "@" + name[1:]
             content.type = self.resolver.find(name, content.value)
             if content.type is None:
                 raise TypeNotFound(content.tag)
@@ -89,8 +90,7 @@ class Typed(Core):
             if isinstance(content.value, Object):
                 known = self.resolver.known(content.value)
                 if known is None:
-                    log.debug('object %s has no type information',
-                        content.value)
+                    log.debug("object %s has no type information", content.value)
                     known = content.type
             frame = Frame(content.type, resolved=known)
             self.resolver.push(frame)
@@ -100,7 +100,7 @@ class Typed(Core):
         self.translate(content)
         self.sort(content)
         if self.skip(content):
-            log.debug('skipping (optional) content:\n%s', content)
+            log.debug("skipping (optional) content:\n%s", content)
             self.resolver.pop()
             return False
         return True
@@ -126,13 +126,14 @@ class Typed(Core):
         # top of the resolver stack since for list processing we play games
         # with the resolver stack.
         #
-        log.debug('ending content:\n%s', content)
+        log.debug("ending content:\n%s", content)
         current = self.resolver.top().type
         if current == content.type:
             self.resolver.pop()
         else:
-            raise Exception('content (end) mismatch: top=(%s) cont=(%s)' % \
-                (current, content))
+            raise Exception(
+                "content (end) mismatch: top=(%s) cont=(%s)" % (current, content)
+            )
 
     def node(self, content):
         #
@@ -147,7 +148,7 @@ class Typed(Core):
         else:
             node = Element(content.tag)
         self.encode(node, content)
-        log.debug('created - node:\n%s', node)
+        log.debug("created - node:\n%s", node)
         return node
 
     def setnil(self, node, content):
@@ -189,7 +190,7 @@ class Typed(Core):
         ns = None
         name = content.real.name
         if self.xstq:
-            ns = content.real.namespace('ns1')
+            ns = content.real.namespace("ns1")
         Typer.manual(node, name, ns)
 
     def skip(self, content):
@@ -272,7 +273,7 @@ class Typed(Core):
             if child.name is None:
                 continue
             if child.isattr():
-                name = '_%s' % child.name
+                name = "_%s" % child.name
             result.append(name)
         return result
 
@@ -283,4 +284,5 @@ class Literal(Typed):
     This marshaller is semi-typed as needed to support both I{document/literal}
     and I{rpc/literal} soap message styles.
     """
+
     pass

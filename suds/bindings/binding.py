@@ -34,7 +34,7 @@ from suds.plugin import PluginContainer
 from copy import deepcopy
 
 
-envns = ('SOAP-ENV', 'http://schemas.xmlsoap.org/soap/envelope/')
+envns = ("SOAP-ENV", "http://schemas.xmlsoap.org/soap/envelope/")
 
 
 class Binding:
@@ -88,7 +88,7 @@ class Binding:
         @return: A collection of parameter definitions
         @rtype: [I{pdef},..]
         """
-        raise Exception('not implemented')
+        raise Exception("not implemented")
 
     def get_message(self, method, args, kwargs):
         """
@@ -130,9 +130,9 @@ class Binding:
             or a collection.
         @rtype: L{Object} or I{list}
         """
-        soapenv = replyroot.getChild('Envelope', envns)
+        soapenv = replyroot.getChild("Envelope", envns)
         soapenv.promotePrefixes()
-        soapbody = soapenv.getChild('Body', envns)
+        soapbody = soapenv.getChild("Body", envns)
         soapbody = self.multiref.process(soapbody)
         nodes = self.replycontent(method, soapbody)
         rtypes = self.returned_types(method)
@@ -180,13 +180,13 @@ class Binding:
         for rt in rtypes:
             dictionary[rt.name] = rt
         unmarshaller = self.unmarshaller()
-        composite = Factory.object('reply')
+        composite = Factory.object("reply")
         for node in nodes:
             tag = node.name
             rt = dictionary.get(tag, None)
             if rt is None:
-                if node.get('id') is None:
-                    raise Exception('<%s/> not mapped to message part' % tag)
+                if node.get("id") is None:
+                    raise Exception("<%s/> not mapped to message part" % tag)
                 else:
                     continue
             resolved = rt.resolve(nobuiltin=True)
@@ -201,7 +201,9 @@ class Binding:
                     setattr(composite, tag, sobject)
             else:
                 if not isinstance(value, list):
-                    value = [value,]
+                    value = [
+                        value,
+                    ]
                     setattr(composite, tag, value)
                 value.append(sobject)
         return composite
@@ -220,8 +222,9 @@ class Binding:
         @rtype: L{Element}
         """
         marshaller = self.marshaller()
-        content = Content(tag=pdef[0], value=object, type=pdef[1],
-            real=pdef[1].resolve())
+        content = Content(
+            tag=pdef[0], value=object, type=pdef[1], real=pdef[1].resolve()
+        )
         return marshaller.process(content)
 
     def mkheader(self, method, hdef, object):
@@ -256,7 +259,7 @@ class Binding:
         @return: The SOAP envelope containing the body and header.
         @rtype: L{Element}
         """
-        env = Element('Envelope', ns=envns)
+        env = Element("Envelope", ns=envns)
         env.addPrefix(Namespace.xsins[0], Namespace.xsins[1])
         env.append(header)
         env.append(body)
@@ -270,7 +273,7 @@ class Binding:
         @return: the SOAP body fragment.
         @rtype: L{Element}
         """
-        header = Element('Header', ns=envns)
+        header = Element("Header", ns=envns)
         header.append(content)
         return header
 
@@ -286,7 +289,7 @@ class Binding:
         @return: The XML content for the <body/>
         @rtype: [L{Element},..]
         """
-        raise Exception('not implemented')
+        raise Exception("not implemented")
 
     def headercontent(self, method):
         """
@@ -302,19 +305,20 @@ class Binding:
         if wsse is not None:
             content.append(wsse.xml())
         headers = self.options().soapheaders
-        if not isinstance(headers, (tuple,list,dict)):
+        if not isinstance(headers, (tuple, list, dict)):
             headers = (headers,)
         if len(headers) == 0:
             return content
         pts = self.headpart_types(method)
-        if isinstance(headers, (tuple,list)):
+        if isinstance(headers, (tuple, list)):
             for header in headers:
                 if isinstance(header, Element):
                     content.append(deepcopy(header))
                     continue
-                if len(pts) == n: break
+                if len(pts) == n:
+                    break
                 h = self.mkheader(method, pts[n], header)
-                ns = pts[n][1].namespace('ns0')
+                ns = pts[n][1].namespace("ns0")
                 h.setPrefix(ns[0], ns[1])
                 content.append(h)
                 n += 1
@@ -324,7 +328,7 @@ class Binding:
                 if header is None:
                     continue
                 h = self.mkheader(method, pt, header)
-                ns = pt[1].namespace('ns0')
+                ns = pt[1].namespace("ns0")
                 h.setPrefix(ns[0], ns[1])
                 content.append(h)
         return content
@@ -339,7 +343,7 @@ class Binding:
         @return: The body content.
         @rtype: [L{Element},...]
         """
-        raise Exception('not implemented')
+        raise Exception("not implemented")
 
     def body(self, content):
         """
@@ -349,7 +353,7 @@ class Binding:
         @return: The SOAP body fragment.
         @rtype: L{Element}
         """
-        body = Element('Body', ns=envns)
+        body = Element("Body", ns=envns)
         body.append(content)
         return body
 
@@ -453,7 +457,7 @@ class PartElement(SchemaElement):
         @param resolved: The part type.
         @type resolved: L{suds.xsd.sxbase.SchemaObject}
         """
-        root = Element('element', ns=Namespace.xsdns)
+        root = Element("element", ns=Namespace.xsdns)
         SchemaElement.__init__(self, resolved.schema, root)
         self.__resolved = resolved
         self.name = name

@@ -21,7 +21,8 @@ from suds import *
 from suds.sax.element import Element
 
 
-soapenc = (None, 'http://schemas.xmlsoap.org/soap/encoding/')
+soapenc = (None, "http://schemas.xmlsoap.org/soap/encoding/")
+
 
 class MultiRef:
     """
@@ -74,20 +75,21 @@ class MultiRef:
         @param node: A node to update.
         @type node: L{Element}
         """
-        href = node.getAttribute('href')
+        href = node.getAttribute("href")
         if href is None:
             return
         id = href.getValue()
         ref = self.catalog.get(id)
         if ref is None:
             import logging
+
             log = logging.getLogger(__name__)
-            log.error('soap multiref: %s, not-resolved', id)
+            log.error("soap multiref: %s, not-resolved", id)
             return
         node.append(ref.children)
         node.setText(ref.getText())
         for a in ref.attributes:
-            if a.name != 'id':
+            if a.name != "id":
                 node.append(a)
         node.remove(href)
 
@@ -101,9 +103,10 @@ class MultiRef:
         for child in body.children:
             if self.soaproot(child):
                 self.nodes.append(child)
-            id = child.get('id')
-            if id is None: continue
-            key = '#%s' % id
+            id = child.get("id")
+            if id is None:
+                continue
+            key = "#%s" % id
             self.catalog[key] = child
 
     def soaproot(self, node):
@@ -117,8 +120,8 @@ class MultiRef:
         @return: True if a soap encoded root.
         @rtype: bool
         """
-        root = node.getAttribute('root', ns=soapenc)
+        root = node.getAttribute("root", ns=soapenc)
         if root is None:
             return True
         else:
-            return ( root.value == '1' )
+            return root.value == "1"

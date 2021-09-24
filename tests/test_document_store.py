@@ -25,6 +25,7 @@ Implemented using the 'pytest' testing framework.
 
 if __name__ == "__main__":
     from . import __init__
+
     __init__.runUsingPyTest(globals())
 
 
@@ -39,12 +40,12 @@ def test_accessing_DocumentStore_content():
     content2 = suds.byte_str("two")
     content1_1 = suds.byte_str("one one")
 
-    store = suds.store.DocumentStore({"1":content1})
+    store = suds.store.DocumentStore({"1": content1})
     assert len(store) == 2
     __test_default_DocumentStore_content(store)
     __test_open(store, "1", content1)
 
-    store = suds.store.DocumentStore({"1":content1, "2":content2})
+    store = suds.store.DocumentStore({"1": content1, "2": content2})
     assert len(store) == 3
     __test_default_DocumentStore_content(store)
     __test_open(store, "1", content1)
@@ -56,12 +57,12 @@ def test_accessing_DocumentStore_content():
     __test_open(store, "uno", content1)
     __test_open(store, "due", content2)
 
-    store = suds.store.DocumentStore({"1 1":content1_1})
+    store = suds.store.DocumentStore({"1 1": content1_1})
     assert len(store) == 2
     __test_default_DocumentStore_content(store)
     __test_open(store, "1 1", content1_1)
 
-    store = suds.store.DocumentStore({"1":content1, "1 1":content1_1})
+    store = suds.store.DocumentStore({"1": content1, "1 1": content1_1})
     assert len(store) == 3
     __test_default_DocumentStore_content(store)
     __test_open(store, "1", content1)
@@ -97,19 +98,19 @@ def test_updating_DocumentStore_content():
     assert len(store) == 1
     __test_default_DocumentStore_content(store)
 
-    store.update({"1":content1})
+    store.update({"1": content1})
     assert len(store) == 2
     __test_default_DocumentStore_content(store)
     __test_open(store, "1", content1)
 
-    store.update({"1":content1, "2":content2, "1 1":content1_1})
+    store.update({"1": content1, "2": content2, "1 1": content1_1})
     assert len(store) == 4
     __test_default_DocumentStore_content(store)
     __test_open(store, "1", content1)
     __test_open(store, "2", content2)
     __test_open(store, "1 1", content1_1)
 
-    store.update({"2":content2, "1 1":content1_1})
+    store.update({"2": content2, "1 1": content1_1})
     assert len(store) == 4
     __test_default_DocumentStore_content(store)
     __test_open(store, "1", content1)
@@ -127,8 +128,9 @@ def test_updating_DocumentStore_content():
 
 
 def __test_default_DocumentStore_content(store):
-    __test_open(store, "schemas.xmlsoap.org/soap/encoding/",
-        suds.store.soap5_encoding_schema)
+    __test_open(
+        store, "schemas.xmlsoap.org/soap/encoding/", suds.store.soap5_encoding_schema
+    )
 
 
 def __test_open(store, location, expected_content):

@@ -14,7 +14,8 @@
 # written by: Jeff Ortel ( jortel@redhat.com )
 
 import sys
-sys.path.append('../../')
+
+sys.path.append("../../")
 
 import traceback as tb
 from tests import *
@@ -26,15 +27,16 @@ errors = 0
 
 
 def start(url):
-    print('\n________________________________________________________________\n')
-    print('Test @ ( %s )' % url)
+    print("\n________________________________________________________________\n")
+    print("Test @ ( %s )" % url)
+
 
 try:
-    url = 'http://localhost:9090/jasperserver-pro/services/repository?wsdl'
+    url = "http://localhost:9090/jasperserver-pro/services/repository?wsdl"
     start(url)
-    client = Client(url, username='jeff', password='ortel')
+    client = Client(url, username="jeff", password="ortel")
     print(client)
-    print(client.service.list(''))
+    print(client.service.list(""))
 except WebFault as f:
     errors += 1
     print(f)
@@ -44,4 +46,4 @@ except Exception as e:
     print(e)
     tb.print_exc()
 
-print('\nFinished: errors = %d' % errors)
+print("\nFinished: errors = %d" % errors)

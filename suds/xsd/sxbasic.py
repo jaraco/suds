@@ -29,6 +29,7 @@ from suds.reader import DocumentReader
 from urllib.parse import urljoin
 
 from logging import getLogger
+
 log = getLogger(__name__)
 
 
@@ -36,6 +37,7 @@ class RestrictionMatcher:
     """
     For use with L{NodeFinder} to match restriction.
     """
+
     def match(self, n):
         return isinstance(n, Restriction)
 
@@ -86,7 +88,7 @@ class TypedContent(Content):
             return self
         query = TypeQuery(qref)
         query.history = [self]
-        log.debug('%s, resolving: %s\n using:%s', self.id, qref, query)
+        log.debug("%s, resolving: %s\n using:%s", self.id, qref, query)
         resolved = query.execute(self.schema)
         if resolved is None:
             log.debug(self.schema)
@@ -123,11 +125,20 @@ class Complex(SchemaObject):
     """
 
     def childtags(self):
-        return 'attribute', 'attributeGroup', 'sequence', 'all', 'choice',  \
-            'complexContent', 'simpleContent', 'any', 'group'
+        return (
+            "attribute",
+            "attributeGroup",
+            "sequence",
+            "all",
+            "choice",
+            "complexContent",
+            "simpleContent",
+            "any",
+            "group",
+        )
 
     def description(self):
-        return ('name',)
+        return ("name",)
 
     def extension(self):
         for c in self.rawchildren:
@@ -150,7 +161,7 @@ class Group(SchemaObject):
     """
 
     def childtags(self):
-        return 'sequence', 'all', 'choice'
+        return "sequence", "all", "choice"
 
     def dependencies(self):
         deps = []
@@ -170,7 +181,7 @@ class Group(SchemaObject):
         self.rawchildren = other.rawchildren
 
     def description(self):
-        return 'name', 'ref'
+        return "name", "ref"
 
 
 class AttributeGroup(SchemaObject):
@@ -181,7 +192,7 @@ class AttributeGroup(SchemaObject):
     """
 
     def childtags(self):
-        return 'attribute', 'attributeGroup'
+        return "attribute", "attributeGroup"
 
     def dependencies(self):
         deps = []
@@ -201,7 +212,7 @@ class AttributeGroup(SchemaObject):
         self.rawchildren = other.rawchildren
 
     def description(self):
-        return 'name', 'ref'
+        return "name", "ref"
 
 
 class Simple(SchemaObject):
@@ -210,7 +221,7 @@ class Simple(SchemaObject):
     """
 
     def childtags(self):
-        return 'restriction', 'any', 'list'
+        return "restriction", "any", "list"
 
     def enum(self):
         for child, ancestry in self.children():
@@ -222,7 +233,7 @@ class Simple(SchemaObject):
         return len(self)
 
     def description(self):
-        return ('name',)
+        return ("name",)
 
     def extension(self):
         for c in self.rawchildren:
@@ -246,7 +257,7 @@ class List(SchemaObject):
         return ()
 
     def description(self):
-        return ('name',)
+        return ("name",)
 
     def xslist(self):
         return True
@@ -259,10 +270,10 @@ class Restriction(SchemaObject):
 
     def __init__(self, schema, root):
         SchemaObject.__init__(self, schema, root)
-        self.ref = root.get('base')
+        self.ref = root.get("base")
 
     def childtags(self):
-        return 'enumeration', 'attribute', 'attributeGroup'
+        return "enumeration", "attribute", "attributeGroup"
 
     def dependencies(self):
         deps = []
@@ -287,7 +298,7 @@ class Restriction(SchemaObject):
         self.prepend(self.rawchildren, other.rawchildren, filter)
 
     def description(self):
-        return ('ref',)
+        return ("ref",)
 
 
 class Collection(SchemaObject):
@@ -299,13 +310,14 @@ class Collection(SchemaObject):
     """
 
     def childtags(self):
-        return 'element', 'sequence', 'all', 'choice', 'any', 'group'
+        return "element", "sequence", "all", "choice", "any", "group"
 
 
 class Sequence(Collection):
     """
     Represents an (XSD) schema <xs:sequence/> node.
     """
+
     def sequence(self):
         return True
 
@@ -314,6 +326,7 @@ class All(Collection):
     """
     Represents an (XSD) schema <xs:all/> node.
     """
+
     def all(self):
         return True
 
@@ -322,6 +335,7 @@ class Choice(Collection):
     """
     Represents an (XSD) schema <xs:choice/> node.
     """
+
     def choice(self):
         return True
 
@@ -332,7 +346,7 @@ class ComplexContent(SchemaObject):
     """
 
     def childtags(self):
-        return 'attribute', 'attributeGroup', 'extension', 'restriction'
+        return "attribute", "attributeGroup", "extension", "restriction"
 
     def extension(self):
         for c in self.rawchildren:
@@ -353,7 +367,7 @@ class SimpleContent(SchemaObject):
     """
 
     def childtags(self):
-        return 'extension', 'restriction'
+        return "extension", "restriction"
 
     def extension(self):
         for c in self.rawchildren:
@@ -378,10 +392,10 @@ class Enumeration(Content):
 
     def __init__(self, schema, root):
         Content.__init__(self, schema, root)
-        self.name = root.get('value')
+        self.name = root.get("value")
 
     def description(self):
-        return ('name',)
+        return ("name",)
 
     def enum(self):
         return True
@@ -394,12 +408,12 @@ class Element(TypedContent):
 
     def __init__(self, schema, root):
         TypedContent.__init__(self, schema, root)
-        a = root.get('form')
+        a = root.get("form")
         if a is not None:
-            self.form_qualified = ( a == 'qualified' )
-        a = self.root.get('nillable')
+            self.form_qualified = a == "qualified"
+        a = self.root.get("nillable")
         if a is not None:
-            self.nillable = ( a in ('1', 'true') )
+            self.nillable = a in ("1", "true")
         self.implany()
 
     def implany(self):
@@ -410,14 +424,12 @@ class Element(TypedContent):
         @return: self
         @rtype: L{Element}
         """
-        if self.type is None and \
-            self.ref is None and \
-            self.root.isempty():
-                self.type = self.anytype()
+        if self.type is None and self.ref is None and self.root.isempty():
+            self.type = self.anytype()
         return self
 
     def childtags(self):
-        return 'attribute', 'simpleType', 'complexType', 'any'
+        return "attribute", "simpleType", "complexType", "any"
 
     def extension(self):
         for c in self.rawchildren:
@@ -445,16 +457,16 @@ class Element(TypedContent):
         self.rawchildren = other.rawchildren
 
     def description(self):
-        return 'name', 'ref', 'type'
+        return "name", "ref", "type"
 
     def anytype(self):
-        """ create an xsd:anyType reference """
+        """create an xsd:anyType reference"""
         p, u = Namespace.xsdns
         mp = self.root.findPrefix(u)
         if mp is None:
             mp = p
             self.root.addPrefix(p, u)
-        return ':'.join((mp, 'anyType'))
+        return ":".join((mp, "anyType"))
 
     def namespace(self, prefix=None):
         """
@@ -491,11 +503,10 @@ class Extension(SchemaObject):
 
     def __init__(self, schema, root):
         SchemaObject.__init__(self, schema, root)
-        self.ref = root.get('base')
+        self.ref = root.get("base")
 
     def childtags(self):
-        return 'attribute', 'attributeGroup', 'sequence', 'all', 'choice',  \
-            'group'
+        return "attribute", "attributeGroup", "sequence", "all", "choice", "group"
 
     def dependencies(self):
         deps = []
@@ -520,7 +531,7 @@ class Extension(SchemaObject):
         return self.ref is not None
 
     def description(self):
-        return ('ref',)
+        return ("ref",)
 
 
 class Import(SchemaObject):
@@ -555,8 +566,8 @@ class Import(SchemaObject):
 
     def __init__(self, schema, root):
         SchemaObject.__init__(self, schema, root)
-        self.ns = (None, root.get('namespace'))
-        self.location = root.get('schemaLocation')
+        self.ns = (None, root.get("namespace"))
+        self.location = root.get("schemaLocation")
         if self.location is None:
             self.location = self.locations.get(self.ns[1])
         self.opened = False
@@ -572,39 +583,41 @@ class Import(SchemaObject):
         if self.opened:
             return
         self.opened = True
-        log.debug('%s, importing ns="%s", location="%s"', self.id, self.ns[1], self.location)
+        log.debug(
+            '%s, importing ns="%s", location="%s"', self.id, self.ns[1], self.location
+        )
         result = self.locate()
         if result is None:
             if self.location is None:
-                log.debug('imported schema (%s) not-found', self.ns[1])
+                log.debug("imported schema (%s) not-found", self.ns[1])
             else:
                 result = self.download(options)
-        log.debug('imported:\n%s', result)
+        log.debug("imported:\n%s", result)
         return result
 
     def locate(self):
-        """ find the schema locally """
+        """find the schema locally"""
         if self.ns[1] != self.schema.tns[1]:
             return self.schema.locate(self.ns)
 
     def download(self, options):
-        """ download the schema """
+        """download the schema"""
         url = self.location
         try:
-            if '://' not in url:
+            if "://" not in url:
                 url = urljoin(self.schema.baseurl, url)
             reader = DocumentReader(options)
             d = reader.open(url)
             root = d.root()
-            root.set('url', url)
+            root.set("url", url)
             return self.schema.instance(root, url, options)
         except TransportError:
-            msg = 'imported schema (%s) at (%s), failed' % (self.ns[1], url)
-            log.error('%s, %s', self.id, msg, exc_info=True)
+            msg = "imported schema (%s) at (%s), failed" % (self.ns[1], url)
+            log.error("%s, %s", self.id, msg, exc_info=True)
             raise Exception(msg)
 
     def description(self):
-        return 'ns', 'location'
+        return "ns", "location"
 
 
 class Include(SchemaObject):
@@ -620,7 +633,7 @@ class Include(SchemaObject):
 
     def __init__(self, schema, root):
         SchemaObject.__init__(self, schema, root)
-        self.location = root.get('schemaLocation')
+        self.location = root.get("schemaLocation")
         if self.location is None:
             self.location = self.locations.get(self.ns[1])
         self.opened = False
@@ -638,40 +651,39 @@ class Include(SchemaObject):
         self.opened = True
         log.debug('%s, including location="%s"', self.id, self.location)
         result = self.download(options)
-        log.debug('included:\n%s', result)
+        log.debug("included:\n%s", result)
         return result
 
     def download(self, options):
-        """ download the schema """
+        """download the schema"""
         url = self.location
         try:
-            if '://' not in url:
+            if "://" not in url:
                 url = urljoin(self.schema.baseurl, url)
             reader = DocumentReader(options)
             d = reader.open(url)
             root = d.root()
-            root.set('url', url)
+            root.set("url", url)
             self.__applytns(root)
             return self.schema.instance(root, url, options)
         except TransportError:
-            msg = 'include schema at (%s), failed' % url
-            log.error('%s, %s', self.id, msg, exc_info=True)
+            msg = "include schema at (%s), failed" % url
+            log.error("%s, %s", self.id, msg, exc_info=True)
             raise Exception(msg)
 
     def __applytns(self, root):
-        """ make sure included schema has same tns. """
-        TNS = 'targetNamespace'
+        """make sure included schema has same tns."""
+        TNS = "targetNamespace"
         tns = root.get(TNS)
         if tns is None:
             tns = self.schema.tns[1]
             root.set(TNS, tns)
         else:
             if self.schema.tns[1] != tns:
-                raise Exception('%s mismatch' % TNS)
-
+                raise Exception("%s mismatch" % TNS)
 
     def description(self):
-        return 'location'
+        return "location"
 
 
 class Attribute(TypedContent):
@@ -681,10 +693,10 @@ class Attribute(TypedContent):
 
     def __init__(self, schema, root):
         TypedContent.__init__(self, schema, root)
-        self.use = root.get('use', default='')
+        self.use = root.get("use", default="")
 
     def childtags(self):
-        return ('restriction',)
+        return ("restriction",)
 
     def isattr(self):
         return True
@@ -695,10 +707,10 @@ class Attribute(TypedContent):
         @return: The default value for the attribute
         @rtype: str
         """
-        return self.root.get('default', default='')
+        return self.root.get("default", default="")
 
     def optional(self):
-        return self.use != 'required'
+        return self.use != "required"
 
     def dependencies(self):
         deps = []
@@ -714,7 +726,7 @@ class Attribute(TypedContent):
         return midx, deps
 
     def description(self):
-        return 'name', 'ref', 'type'
+        return "name", "ref", "type"
 
 
 class Any(Content):
@@ -724,13 +736,13 @@ class Any(Content):
 
     def get_child(self, name):
         root = self.root.clone()
-        root.set('note', 'synthesized (any) child')
+        root.set("note", "synthesized (any) child")
         child = Any(self.schema, root)
         return child, []
 
     def get_attribute(self, name):
         root = self.root.clone()
-        root.set('note', 'synthesized (any) attribute')
+        root.set("note", "synthesized (any) attribute")
         attribute = Any(self.schema, root)
         return attribute, []
 
@@ -745,24 +757,24 @@ class Factory:
     """
 
     tags = {
-        'import' : Import,
-        'include' : Include,
-        'complexType' : Complex,
-        'group' : Group,
-        'attributeGroup' : AttributeGroup,
-        'simpleType' : Simple,
-        'list' : List,
-        'element' : Element,
-        'attribute' : Attribute,
-        'sequence' : Sequence,
-        'all' : All,
-        'choice' : Choice,
-        'complexContent' : ComplexContent,
-        'simpleContent' : SimpleContent,
-        'restriction' : Restriction,
-        'enumeration' : Enumeration,
-        'extension' : Extension,
-        'any' : Any,
+        "import": Import,
+        "include": Include,
+        "complexType": Complex,
+        "group": Group,
+        "attributeGroup": AttributeGroup,
+        "simpleType": Simple,
+        "list": List,
+        "element": Element,
+        "attribute": Attribute,
+        "sequence": Sequence,
+        "all": All,
+        "choice": Choice,
+        "complexContent": ComplexContent,
+        "simpleContent": SimpleContent,
+        "restriction": Restriction,
+        "enumeration": Enumeration,
+        "extension": Extension,
+        "any": Any,
     }
 
     @classmethod
@@ -792,7 +804,7 @@ class Factory:
             return fn(schema, root)
 
     @classmethod
-    def build(cls, root, schema, filter=('*',)):
+    def build(cls, root, schema, filter=("*",)):
         """
         Build an xsobject representation.
         @param root: An schema XML root.
@@ -804,7 +816,7 @@ class Factory:
         """
         children = []
         for node in root.getChildren(ns=Namespace.xsdns):
-            if '*' in filter or node.name in filter:
+            if "*" in filter or node.name in filter:
                 child = cls.create(node, schema)
                 if child is None:
                     continue
@@ -847,11 +859,8 @@ class Factory:
 # Static Import Bindings :-(
 #######################################################
 Import.bind(
-    'http://schemas.xmlsoap.org/soap/encoding/',
-    'suds://schemas.xmlsoap.org/soap/encoding/')
-Import.bind(
-    'http://www.w3.org/XML/1998/namespace',
-    'http://www.w3.org/2001/xml.xsd')
-Import.bind(
-    'http://www.w3.org/2001/XMLSchema',
-    'http://www.w3.org/2001/XMLSchema.xsd')
+    "http://schemas.xmlsoap.org/soap/encoding/",
+    "suds://schemas.xmlsoap.org/soap/encoding/",
+)
+Import.bind("http://www.w3.org/XML/1998/namespace", "http://www.w3.org/2001/xml.xsd")
+Import.bind("http://www.w3.org/2001/XMLSchema", "http://www.w3.org/2001/XMLSchema.xsd")

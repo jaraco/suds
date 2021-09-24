@@ -25,6 +25,7 @@ Implemented using the 'pytest' testing framework.
 
 if __name__ == "__main__":
     from . import __init__
+
     __init__.runUsingPyTest(globals())
 
 
@@ -41,6 +42,7 @@ import tempfile
 
 class InvisibleMan:
     """Dummy class used for pickling related tests."""
+
     def __init__(self, x):
         self.x = x
 
@@ -78,7 +80,8 @@ def test_DocumentCache(tmpdir):
     # TODO: Update this test to no longer depend on the exact input XML data
     # formatting. We currently expect it to be formatted exactly as what gets
     # read back from the DocumentCache.
-    content = suds.byte_str("""\
+    content = suds.byte_str(
+        """\
 <xsd:element name="Elemento">
    <xsd:simpleType>
       <xsd:restriction base="xsd:string">
@@ -87,7 +90,8 @@ def test_DocumentCache(tmpdir):
          <xsd:enumeration value="gamma"/>
       </xsd:restriction>
    </xsd:simpleType>
-</xsd:element>""")
+</xsd:element>"""
+    )
     xml = suds.sax.parser.Parser().parse(io.BytesIO(content))
     cache.put("unga1", xml.getChildren()[0])
     readXML = cache.get("unga1")
@@ -344,10 +348,12 @@ def test_ObjectCache(tmpdir):
 
 def _isEmptyCacheFolder(folder):
     assert os.path.isdir(folder)
+
     def walkError(error):
         pytest.fail("Error attempting to walk through cache folder contents.")
+
     count = 0
     for root, folders, files in os.walk(folder, onerror=walkError):
         assert root == folder
-        return len(folders) == 0 and len(files) == 1 and files[0] == 'version'
+        return len(folders) == 0 and len(files) == 1 and files[0] == "version"
     return False

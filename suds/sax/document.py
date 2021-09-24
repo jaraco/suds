@@ -24,7 +24,7 @@ from suds.sax.element import Element
 
 
 class Document:
-    """ An XML Document """
+    """An XML Document"""
 
     DECL = '<?xml version="1.0" encoding="UTF-8"?>'
 
@@ -95,9 +95,9 @@ class Document:
         """
         if self.__root is None:
             return None
-        if path[0] == '/':
+        if path[0] == "/":
             path = path[1:]
-        path = path.split('/',1)
+        path = path.split("/", 1)
         if self.getChild(path[0]) is None:
             return None
         if len(path) > 1:
@@ -116,15 +116,17 @@ class Document:
         """
         if self.__root is None:
             return []
-        if path[0] == '/':
+        if path[0] == "/":
             path = path[1:]
-        path = path.split('/',1)
+        path = path.split("/", 1)
         if self.getChild(path[0]) is None:
             return []
         if len(path) > 1:
             return self.__root.childrenAtPath(path[1])
         else:
-            return [self.__root,]
+            return [
+                self.__root,
+            ]
 
     def getChildren(self, name=None, ns=None):
         """
@@ -143,7 +145,9 @@ class Document:
         if matched is None:
             return []
         else:
-            return [matched,]
+            return [
+                matched,
+            ]
 
     def str(self):
         """
@@ -155,9 +159,9 @@ class Document:
         s.append(self.DECL)
         root = self.root()
         if root is not None:
-            s.append('\n')
+            s.append("\n")
             s.append(root.str())
-        return ''.join(s)
+        return "".join(s)
 
     def plain(self):
         """
@@ -170,7 +174,7 @@ class Document:
         root = self.root()
         if root is not None:
             s.append(root.plain())
-        return ''.join(s)
+        return "".join(s)
 
     def __unicode__(self):
         return self.str()
