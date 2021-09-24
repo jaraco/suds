@@ -28,6 +28,8 @@ then passing that wrapper object instead.
 
 """
 
+import itertools
+
 if __name__ == "__main__":
     from . import __init__
     __init__.runUsingPyTest(globals())
@@ -38,6 +40,9 @@ import suds.store
 import tests
 
 import pytest
+
+
+flatten = itertools.chain.from_iterable
 
 
 # TODO: Update the current restriction type output parameter handling so such
@@ -70,7 +75,7 @@ def test_bare_input_restriction_types():
     assert not _isInputWrapped(client_named, "f")
 
 
-def parametrize_single_element_input_test(param_names, param_values):
+def parametrize_single_element_input_test(param_value):
     """
     Define different parametrized single element input test function calls.
 
@@ -83,22 +88,18 @@ def parametrize_single_element_input_test(param_names, param_values):
         * [optional] reason for marking this test case as expected to fail
 
     """
-    mark = pytest
-    expanded_param_values = []
-    for param_value in param_values:
-        xsd, external_element_name = param_value[0:2]
-        for next_value in param_value[2:]:
-            assert len(next_value) in (2, 3)
-            args, request_body = next_value[:2]
-            xfail = len(next_value) == 3
-            param = (xsd, external_element_name, args, request_body)
-            if xfail:
-                param = pytest.mark.xfail(param, reason=next_value[2])
-            expanded_param_values.append(param)
-    return (param_names, expanded_param_values), {}
+    xsd, external_element_name = param_value[0:2]
+    for next_value in param_value[2:]:
+        assert len(next_value) in (2, 3)
+        args, request_body = next_value[:2]
+        param = (xsd, external_element_name, args, request_body)
+        marks = [pytest.mark.xfail(reason=reason) for reason in next_value[2:]]
+        yield pytest.param(*param, marks=marks)
 
-@pytest.mark.indirect_parametrize(parametrize_single_element_input_test,
-    ("xsd", "external_element_name", "args", "request_body"), (
+
+@pytest.mark.parametrize(
+    ("xsd", "external_element_name", "args", "request_body"),
+    flatten(map(parametrize_single_element_input_test, (
     # Bare non-optional element.
     ('<xsd:element name="a" type="xsd:integer"/>', "a",
         ([], "<ns0:a/>"),
@@ -375,7 +376,7 @@ def parametrize_single_element_input_test(param_names, param_values):
         ([None, 1], "<ns0:Wrapper><ns0:b>1</ns0:b></ns0:Wrapper>"),
         ([5, 1],
             "<ns0:Wrapper><ns0:a>5</ns0:a><ns0:b>1</ns0:b></ns0:Wrapper>")),
-    ))
+    ))))
 def test_document_literal_request_for_single_element_input(xsd,
         external_element_name, args, request_body):
     wsdl = tests.wsdl_input(xsd, external_element_name)
