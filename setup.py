@@ -19,9 +19,6 @@
 # 'setuptools' related packages.
 from setuptools import setup, find_packages
 
-with open('README.rst') as strm:
-    long_description = strm.read()
-
 
 package_name = "suds-bis"
 project_url = "https://github.com/jaraco/suds"
@@ -30,7 +27,6 @@ project_url = "https://github.com/jaraco/suds"
 setup(
     name=package_name,
     description="Lightweight SOAP client",
-    long_description=long_description,
     keywords=["SOAP", "web", "service", "client"],
     url=project_url,
     packages=find_packages(),
