@@ -195,6 +195,10 @@ def test_sending_unicode_data(monkeypatch):
         @callOnce
         def readline(self, *args, **kwargs):
             raise MyException
+        def close(self):
+            pass
+        def flush(self):
+            pass
 
     class MockSocket:
         def __init__(self, mocker):
@@ -213,6 +217,10 @@ def test_sending_unicode_data(monkeypatch):
         def settimeout(self, *args, **kwargs):
             assert not hasattr(self, "settimeout_called")
             self.settimeout_called = True
+        def close(self):
+            pass
+        def setsockopt(self, *args, **kwargs):
+            pass
 
     host = "an-easily-recognizable-host-name-214894932"
     port = 9999
