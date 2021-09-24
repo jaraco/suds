@@ -20,12 +20,14 @@ Suds is a lightweight SOAP Python client providing a Web Service proxy.
 
 import sys
 
+import importlib_metadata as metadata
+
 
 #
 # Project properties
 #
 
-from .version import __version__
+__version__ = metadata.version('suds-bis')
 
 
 #
