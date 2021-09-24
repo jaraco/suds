@@ -97,7 +97,7 @@ class MockParamType:
     # the argument parsing functionality. This will remove code duplication
     # between different binding implementations and make their features more
     # balanced.
-    pytest.mark.xfail(reason="Not yet implemented.")("rpc")
+    pytest.param("rpc", marks=pytest.mark.xfail(reason="Not yet implemented."))
     ))
 def test_binding_uses_argument_parsing(monkeypatch, binding_style):
     """
