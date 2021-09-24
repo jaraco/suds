@@ -60,16 +60,13 @@ if script_folder != current_folder:
     print("ERROR: Suds library setup script needs to be run from the folder "
         "containing it.")
     print()
-    print("Current folder: %s" % current_folder)
-    print("Script folder: %s" % script_folder)
+    print(("Current folder: %s" % current_folder))
+    print(("Script folder: %s" % script_folder))
     sys.exit(-2)
 
 # Load the suds library version information directly into this module without
 # having to import the whole suds library itself. Importing the suds package
 # would have caused problems like the following:
-#   * Forcing the imported package module to be Python 3 compatible without any
-#     lib2to3 fixers first being run on it (since such fixers get run only
-#     later as a part of the setup procedure).
 #   * Making the setup module depend on the package module's dependencies, thus
 #     forcing the user to install them manually (since the setup procedure that
 #     is supposed to install them automatically will not be able to run unless
@@ -86,17 +83,6 @@ extra_setup_cmdclass = {}
 if sys.version_info >= (2, 5):
     # distutils.setup() 'obsoletes' parameter not introduced until Python 2.5.
     extra_setup_params["obsoletes"] = ["suds"]
-
-if sys.version_info >= (3, 0):
-    extra_setup_params["use_2to3"] = True
-
-    #   Teach Python's urllib lib2to3 fixer that the old urllib2.__version__
-    # data member is now stored in the urllib.request module.
-    import lib2to3.fixes.fix_urllib
-    for x in lib2to3.fixes.fix_urllib.MAPPING["urllib2"]:
-        if x[0] == "urllib.request":
-            x[1].append("__version__")
-            break;
 
 with open('README.rst') as strm:
     long_description = strm.read()
@@ -172,16 +158,8 @@ setup(
         "Natural Language :: English",
         "Operating System :: OS Independent",
         "Programming Language :: Python",
-        "Programming Language :: Python :: 2",
-        "Programming Language :: Python :: 2.4",
-        "Programming Language :: Python :: 2.5",
-        "Programming Language :: Python :: 2.6",
-        "Programming Language :: Python :: 2.7",
         "Programming Language :: Python :: 3",
-        "Programming Language :: Python :: 3.0",
-        "Programming Language :: Python :: 3.1",
-        "Programming Language :: Python :: 3.2",
-        "Programming Language :: Python :: 3.3",
+        "Programming Language :: Python :: 3 :: Only",
         "Topic :: Internet"],
 
     #   PEP-314 states that if possible license & platform should be specified
