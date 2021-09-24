@@ -178,8 +178,6 @@ class Client(UnicodeMixin):
         s = ['\n']
         s.append('Suds ( https://fedorahosted.org/suds/ )')
         s.append('  version: %s' % suds.__version__)
-        if ( suds.__build__ ):
-            s.append('  build: %s' % suds.__build__)
         for sd in self.sd:
             s.append('\n\n%s' % str(sd))
         return ''.join(s)
