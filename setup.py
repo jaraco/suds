@@ -17,36 +17,10 @@
 # written by: Jeff Ortel ( jortel@redhat.com )
 
 # 'setuptools' related packages.
-import pkg_resources
 from setuptools import setup, find_packages
 
-import os
-import os.path
 import sys
 
-
-# Setup documentation incorrectly states that it will search for packages
-# relative to the setup script folder by default when in fact it will search
-# for them relative to the current working folder. It seems avoiding this
-# problem cleanly and making the setup script runnable with any current working
-# folder would require better setup() support.
-# Attempted alternatives:
-#   * Changing the current working folder internally makes any passed path
-#     parameters be interpreted relative to the setup script folder when they
-#     should be interpreted relative to the initial current working folder.
-#   * Passing the script folder as setup() & find_packages() function
-#     parameters makes the final installed distribution contain the absolute
-#     package source location information and not include some other meta-data
-#     package information as well.
-script_folder = os.path.realpath(os.path.dirname(__file__))
-current_folder = os.path.realpath(os.getcwd())
-if script_folder != current_folder:
-    print("ERROR: Suds library setup script needs to be run from the folder "
-        "containing it.")
-    print()
-    print(("Current folder: %s" % current_folder))
-    print(("Script folder: %s" % script_folder))
-    sys.exit(-2)
 
 extra_setup_params = {}
 
