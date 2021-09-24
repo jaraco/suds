@@ -19,7 +19,6 @@ Contains basic caching classes.
 """
 
 import suds
-from suds.transport import *
 from suds.sax.parser import Parser
 from suds.sax.element import Element
 

@@ -18,8 +18,8 @@
 The I{sxbase} module provides I{base} classes representing schema objects.
 """
 
-from suds import *
-from suds.xsd import *
+from suds import UnicodeMixin, objid, Repr
+from suds.xsd import Filter, isqref, qualify
 from suds.sax.element import Element
 from suds.sax import Namespace
 

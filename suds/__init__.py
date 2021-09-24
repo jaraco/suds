@@ -118,7 +118,7 @@ def objid(obj):
     return obj.__class__.__name__ + ":" + hex(id(obj))
 
 
-def tostr(object, encoding=None):
+def tostr(object, encoding=None):  # noqa: C901
     """get a unicode safe string representation of an object"""
     if isinstance(object, str):
         if encoding is None:
@@ -160,19 +160,13 @@ def tostr(object, encoding=None):
             s.append(", ")
         s.append("}")
         return "".join(s)
-    try:
-        return str(object)
-    except:
-        return str(object)
+    return str(object)
 
 
 # Idea from 'http://lucumr.pocoo.org/2011/1/22/forwards-compatible-python'.
 class UnicodeMixin(object):
-    if sys.version_info >= (3, 0):
-        # For Python 3, __str__() and __unicode__() should be identical.
-        __str__ = lambda x: x.__unicode__()
-    else:
-        __str__ = lambda x: str(x).encode("utf-8")
+    def __str__(self):
+        return self.__unicode__()
 
 
 #   Used instead of byte literals because they are not supported on Python

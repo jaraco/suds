@@ -13,13 +13,8 @@
 # 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 # written by: Jeff Ortel ( jortel@redhat.com )
 
-import sys
-
-sys.path.append("../../")
-
 import traceback as tb
 import suds.metrics as metrics
-from tests import *
 from suds import WebFault
 from suds.client import Client
 
@@ -33,7 +28,7 @@ def start(url):
     print("Test @ ( %s ) %d" % (url, errors))
 
 
-def main():
+def main():  # noqa: C901
     global errors
     try:
         url = "http://mssoapinterop.org/asmx/simple.asmx?WSDL"
@@ -180,7 +175,10 @@ def main():
         tb.print_exc()
 
     try:
-        url = "http://ap1314-dsr.compmed.ucdavis.edu/dataserver/Aperio.Images/Image?method=wsdl"
+        url = (
+            "http://ap1314-dsr.compmed.ucdavis.edu/dataserver/Aperio.Images/Image"
+            "?method=wsdl"
+        )
         start(url)
         client = Client(url)
         # print client.factory.resolver.schema

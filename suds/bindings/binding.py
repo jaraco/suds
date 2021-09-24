@@ -17,7 +17,7 @@
 Provides classes for (WS) SOAP bindings.
 """
 
-from suds import *
+from suds import TypeNotFound
 from suds.sax import Namespace
 from suds.sax.document import Document
 from suds.sax.element import Element
@@ -28,8 +28,6 @@ from suds.umx.typed import Typed as UmxTyped
 from suds.bindings.multiref import MultiRef
 from suds.xsd.query import TypeQuery, ElementQuery
 from suds.xsd.sxbasic import Element as SchemaElement
-from suds.options import Options
-from suds.plugin import PluginContainer
 
 from copy import deepcopy
 

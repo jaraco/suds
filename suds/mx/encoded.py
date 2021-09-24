@@ -18,8 +18,8 @@
 Provides encoded I{marshaller} classes.
 """
 
-from suds import *
-from suds.mx import *
+from suds import TypeNotFound
+from suds.mx import Content
 from suds.mx.literal import Literal
 from suds.mx.typer import Typer
 from suds.sudsobject import Factory, Object
@@ -107,7 +107,8 @@ class Encoded(Literal):
         query = TypeQuery(aty)
         ref = query.execute(self.schema)
         if ref is None:
-            raise TypeNotFound(qref)
+            # TODO: what was meant by qref?
+            raise TypeNotFound(qref)  # noqa: F821
         for x in content.value:
             if isinstance(x, (list, tuple)):
                 array.item.append(x)

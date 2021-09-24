@@ -59,7 +59,9 @@ def test_choice_parameter_implementation_inconsistencies():
     constructed parameter definition structure.
 
     """
-    client = lambda x, y: tests.client_from_wsdl(tests.wsdl_input(x, y))
+
+    def client(x, y):
+        return tests.client_from_wsdl(tests.wsdl_input(x, y))
 
     client_simple_short = client(
         """\
@@ -89,7 +91,9 @@ def test_choice_parameter_implementation_inconsistencies():
         "Wrapper",
     )
 
-    method_param = lambda x: x.sd[0].ports[0][1][0][1][0]
+    def method_param(x):
+        return x.sd[0].ports[0][1][0][1][0]
+
     method_param_simple_short = method_param(client_simple_short)
     method_param_simple_long = method_param(client_simple_long)
     method_param_complex_wrapped = method_param(client_complex_wrapped)
@@ -153,7 +157,7 @@ xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/">
     assert len(metadata) == 2
     metadata_string = str(metadata)
     assert re.search(" sxtype = ", metadata_string)
-    assert re.search(" ordering\[\] = ", metadata_string)
+    assert re.search(r" ordering\[\] = ", metadata_string)
 
 
 def test_empty_invalid_wsdl(monkeypatch):
@@ -677,7 +681,10 @@ xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/">
         request,
         """\
 <?xml version="1.0" encoding="UTF-8"?>
-<SOAP-ENV:Envelope xmlns:ns0="my-namespace" xmlns:ns1="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/">
+<SOAP-ENV:Envelope xmlns:ns0="my-namespace" \
+xmlns:ns1="http://schemas.xmlsoap.org/soap/envelope/" \
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" \
+xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/">
    <SOAP-ENV:Header/>
    <ns1:Body>
       <ns0:Choice>
@@ -695,7 +702,10 @@ xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/">
         request,
         """\
 <?xml version="1.0" encoding="UTF-8"?>
-<SOAP-ENV:Envelope xmlns:ns0="my-namespace" xmlns:ns1="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/">
+<SOAP-ENV:Envelope xmlns:ns0="my-namespace" \
+xmlns:ns1="http://schemas.xmlsoap.org/soap/envelope/" \
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" \
+xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/">
    <SOAP-ENV:Header/>
    <ns1:Body>
       <ns0:Choice>
@@ -787,7 +797,10 @@ xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/">
         request,
         """\
 <?xml version="1.0" encoding="UTF-8"?>
-<SOAP-ENV:Envelope xmlns:ns0="my-namespace" xmlns:ns1="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/">
+<SOAP-ENV:Envelope xmlns:ns0="my-namespace" \
+xmlns:ns1="http://schemas.xmlsoap.org/soap/envelope/" \
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" \
+xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/">
    <SOAP-ENV:Header/>
    <ns1:Body>
       <ns0:External>
@@ -1825,12 +1838,9 @@ xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/">
     assert len(schema.types) == 1
     typo = schema.types["Typo", "my-namespace"]
     assert len(schema.elements) == 10
-    elementoTyped = schema.elements["ElementoTyped", "my-namespace"]
     elementoTyped11 = schema.elements["ElementoTyped11", "my-namespace"]
-    elementoTyped12 = schema.elements["ElementoTyped12", "my-namespace"]
     elementoTyped13 = schema.elements["ElementoTyped13", "my-namespace"]
     elementoTyped21 = schema.elements["ElementoTyped21", "my-namespace"]
-    elementoTyped22 = schema.elements["ElementoTyped22", "my-namespace"]
     elementoTyped23 = schema.elements["ElementoTyped23", "my-namespace"]
     elementoTypedX = schema.elements["ElementoTypedX", "my-namespace"]
     elementoTypedX1 = schema.elements["ElementoTypedX1", "my-namespace"]
@@ -2149,7 +2159,7 @@ xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/">
     unga_bunga = client.wsdl.schema.types["UngaBunga", "my-namespace"]
     assert isinstance(unga_bunga, suds.xsd.sxbasic.Complex)
     fifi = client.wsdl.schema.types["Fifi", "my-namespace"]
-    assert isinstance(unga_bunga, suds.xsd.sxbasic.Complex)
+    assert isinstance(fifi, suds.xsd.sxbasic.Complex)
 
     pytest.raises(
         KeyError, client.wsdl.schema.types.__getitem__, ("DoesNotExist", "OMG")

@@ -19,8 +19,6 @@ The plugin module provides classes for implementation
 of suds plugins.
 """
 
-from suds import *
-
 from logging import getLogger
 
 log = getLogger(__name__)

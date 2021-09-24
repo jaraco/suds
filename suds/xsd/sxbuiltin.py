@@ -19,9 +19,7 @@ The I{sxbuiltin} module provides classes that represent
 XSD I{builtin} schema objects.
 """
 
-from suds import *
-from suds.xsd import *
-from suds.sax.date import *
+from suds.sax.date import Date, Time, DateTime
 from suds.xsd.sxbase import XBuiltin
 
 import datetime as dt

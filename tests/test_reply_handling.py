@@ -41,7 +41,10 @@ import xml.sax
 
 def test_ACCEPTED_and_NO_CONTENT_status_reported_as_None_with_faults():
     client = tests.client_from_wsdl(_wsdl__simple, faults=True)
-    f = lambda r, s: client.service.f(__inject={"reply": suds.byte_str(r), "status": s})
+
+    def f(r, s):
+        return client.service.f(__inject={"reply": suds.byte_str(r), "status": s})
+
     assert f("", None) is None
     pytest.raises(Exception, f, "", http.client.INTERNAL_SERVER_ERROR)
     assert f("", http.client.ACCEPTED) is None
@@ -52,7 +55,10 @@ def test_ACCEPTED_and_NO_CONTENT_status_reported_as_None_with_faults():
 
 def test_ACCEPTED_and_NO_CONTENT_status_reported_as_None_without_faults():
     client = tests.client_from_wsdl(_wsdl__simple, faults=False)
-    f = lambda r, s: client.service.f(__inject={"reply": suds.byte_str(r), "status": s})
+
+    def f(r, s):
+        return client.service.f(__inject={"reply": suds.byte_str(r), "status": s})
+
     assert f("", None) is not None
     assert f("", http.client.INTERNAL_SERVER_ERROR) is not None
     assert f("", http.client.ACCEPTED) is None
@@ -274,7 +280,7 @@ def test_builtin_data_types(monkeypatch):
     #   Python 2.7.3, 3.2.3:
     #     "invalid literal for int() with base 10: 'Fifteen'"
     assert re.match(
-        "invalid literal for int\(\)( with base 10)?: ('?)Fifteen" "\\2$", str(e)
+        r"invalid literal for int\(\)( with base 10)?: ('?)Fifteen" "\\2$", str(e)
     )
 
     # Suds returns invalid boolean values as None.
@@ -346,9 +352,12 @@ def test_disabling_automated_simple_interface_unwrapping():
 
 def test_empty_reply():
     client = tests.client_from_wsdl(_wsdl__simple, faults=False)
-    f = lambda status=None, description=None: client.service.f(
-        __inject=dict(reply=suds.byte_str(), status=status, description=description)
-    )
+
+    def f(status=None, description=None):
+        return client.service.f(
+            __inject=dict(reply=suds.byte_str(), status=status, description=description)
+        )
+
     status, reason = f()
     assert status == http.client.OK
     assert reason is None
@@ -601,9 +610,9 @@ def test_simple_bare_and_wrapped_output():
     # results get presented the same way even though the wrapped one actually
     # has an extra wrapper element around its received output data.
     data = "The meaning of life."
-    get_response = lambda client, x: client.service.f(
-        __inject=dict(reply=suds.byte_str(x))
-    )
+
+    def get_response(client, x):
+        return client.service.f(__inject=dict(reply=suds.byte_str(x)))
 
     response_bare = get_response(
         client_bare,

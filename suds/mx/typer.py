@@ -18,10 +18,9 @@
 Provides sx typing classes.
 """
 
-from suds import *
-from suds.mx import *
 from suds.sax import Namespace as NS
 from suds.sax.text import Text
+from suds.sudsobject import Object
 
 
 class Typer:
@@ -33,9 +32,7 @@ class Typer:
 
     types = {
         int: ("int", NS.xsdns),
-        int: ("long", NS.xsdns),
         float: ("float", NS.xsdns),
-        str: ("string", NS.xsdns),
         str: ("string", NS.xsdns),
         Text: ("string", NS.xsdns),
         bool: ("boolean", NS.xsdns),
@@ -115,5 +112,5 @@ class Typer:
             md = object.__metadata__
             known = md.sxtype
             return known
-        except:
+        except Exception:
             pass

@@ -18,8 +18,6 @@
 The I{wsse} module provides WS-Security.
 """
 
-from logging import getLogger
-from suds import *
 from suds.sudsobject import Object
 from suds.sax.element import Element
 from suds.sax.date import DateTime, UtcTimezone
@@ -39,7 +37,8 @@ wssens = (
 )
 wsuns = (
     "wsu",
-    "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd",
+    "http://docs.oasis-open.org/wss/2004/01/"
+    "oasis-200401-wss-wssecurity-utility-1.0.xsd",
 )
 wsencns = ("wsenc", "http://www.w3.org/2001/04/xmlenc#")
 
@@ -92,7 +91,7 @@ class Token(Object):
 
     @classmethod
     def sysdate(cls):
-        utc = DateTime(self.utc())
+        utc = DateTime(cls.utc())
         return str(utc)
 
     def __init__(self):

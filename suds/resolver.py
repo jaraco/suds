@@ -19,10 +19,11 @@ The I{resolver} module provides a collection of classes that
 provide wsdl/xsd named type resolution.
 """
 
-from suds import *
+from suds import Repr
 from suds.sax import splitPrefix, Namespace
 from suds.sudsobject import Object
-from suds.xsd.query import BlindQuery, TypeQuery, qualify
+from suds.xsd import qualify
+from suds.xsd.query import BlindQuery
 
 import re
 
@@ -87,7 +88,7 @@ class PathResolver(Resolver):
         Resolver.__init__(self, wsdl.schema)
         self.wsdl = wsdl
         self.altp = re.compile("({)(.+)(})(.+)")
-        self.splitp = re.compile("({.+})*[^\%s]+" % ps[0])
+        self.splitp = re.compile(r"({.+})*[^\%s]+" % ps[0])
 
     def find(self, path, resolved=True):
         """
@@ -338,7 +339,7 @@ class NodeResolver(TreeResolver):
             return result
         if push:
             frame = Frame(result, resolved=known, ancestry=ancestry)
-            pushed = self.push(frame)
+            self.push(frame)
         if resolved:
             result = result.resolve()
         return result
@@ -357,7 +358,8 @@ class NodeResolver(TreeResolver):
         name = "@%s" % name
         parent = self.top().resolved
         if parent is None:
-            result, ancestry = self.query(name, node)
+            # TODO: node is undefined
+            result, ancestry = self.query(name, node)  # noqa: F821
         else:
             result, ancestry = self.getchild(name, parent)
         if result is None:
@@ -426,7 +428,7 @@ class GraphResolver(TreeResolver):
             known = self.known(object)
         if push:
             frame = Frame(result, resolved=known, ancestry=ancestry)
-            pushed = self.push(frame)
+            self.push(frame)
         if resolved:
             if known is None:
                 result = result.resolve()
@@ -461,7 +463,7 @@ class GraphResolver(TreeResolver):
             md = object.__metadata__
             known = md.sxtype
             return known
-        except:
+        except Exception:
             pass
 
 

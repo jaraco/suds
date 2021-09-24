@@ -17,17 +17,13 @@
 # This test requires installation or visibility to my local axis(1) server.
 #
 
-import sys
-
-sys.path.append("../../")
-
 import traceback as tb
-from tests import *
+from suds import tostr
 from suds import WebFault
 from suds.client import Client
 from suds.sudsobject import Object
 from suds.transport.https import HttpAuthenticated
-from suds.plugin import *
+from suds.plugin import InitPlugin, DocumentPlugin, MessagePlugin
 
 
 errors = 0
@@ -77,7 +73,7 @@ def start(url):
     print("Test @ ( %s )\nerrors = %d\n" % (url, errors))
 
 
-def main():
+def main():  # noqa: C901
     global errors
 
     try:
@@ -134,7 +130,22 @@ def main():
         # Async
         #
         client.options.nosend = True
-        reply = '<?xml version="1.0" encoding="utf-8"?><soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><soapenv:Body><ns1:addPersonResponse soapenv:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" xmlns:ns1="http://basic.suds.fedora.org"><addPersonReturn xsi:type="xsd:string">person (jeff&#x4D2;,ortel) at age 43 with phone numbers (410-555-5138,919-555-4406,205-777-1212, and pets (Chance,) - added.</addPersonReturn></ns1:addPersonResponse></soapenv:Body></soapenv:Envelope>'
+        reply = (
+            '<?xml version="1.0" encoding="utf-8"?>'
+            '<soapenv:Envelope '
+            'xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" '
+            'xmlns:xsd="http://www.w3.org/2001/XMLSchema" '
+            'xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">'
+            '<soapenv:Body>'
+            '<ns1:addPersonResponse '
+            'soapenv:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" '
+            'xmlns:ns1="http://basic.suds.fedora.org">'
+            '<addPersonReturn xsi:type="xsd:string">'
+            'person (jeff&#x4D2;,ortel) at age 43 with phone '
+            'numbers (410-555-5138,919-555-4406,205-777-1212, '
+            'and pets (Chance,) - added.</addPersonReturn>'
+            '</ns1:addPersonResponse></soapenv:Body></soapenv:Envelope>'
+        )
         request = client.service.addPerson(person)
         result = request.succeeded(reply)
         error = Object()

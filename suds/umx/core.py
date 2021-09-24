@@ -18,8 +18,7 @@
 Provides base classes for XML->object I{unmarshalling}.
 """
 
-from suds import *
-from suds.umx import *
+from suds.umx import Content
 from suds.umx.attrlist import AttrList
 from suds.sax.text import Text
 from suds.sudsobject import Factory, merge
@@ -67,10 +66,11 @@ class Core:
         """
         Perform final processing of the resulting data structure as follows:
           - Mixed values (children and text) will have a result of the I{content.node}.
-          - Simi-simple values (attributes, no-children and text) will have a result of a
-             property object.
-          - Simple values (no-attributes, no-children with text nodes) will have a string
-             result equal to the value of the content.node.getText().
+          - Simi-simple values (attributes, no-children and text)
+             will have a result of a property object.
+          - Simple values (no-attributes, no-children with text nodes)
+             will have a string result equal to the value of the
+             content.node.getText().
         @param content: The current content being unmarshalled.
         @type content: L{Content}
         @return: The post-processed result.

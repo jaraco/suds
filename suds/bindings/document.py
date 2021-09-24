@@ -18,7 +18,6 @@ Provides classes for the (WS) SOAP I{document/literal} binding.
 
 """
 
-from suds import *
 from suds.argparser import parse_args
 from suds.bindings.binding import Binding
 from suds.sax.element import Element

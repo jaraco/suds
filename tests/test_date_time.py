@@ -28,7 +28,6 @@ if __name__ == "__main__":
 
 from suds.sax.date import FixedOffsetTimezone, Date, DateTime, Time, UtcTimezone
 from suds.xsd.sxbuiltin import XDate, XDateTime, XTime
-import tests
 
 import pytest
 
@@ -430,7 +429,7 @@ class TestXDate:
     """
 
     def testTranslateEmptyStringToPythonObject(self):
-        assert XDate.translate("") == None
+        assert XDate.translate("") is None
 
     def testTranslateStringToPythonObject(self):
         assert XDate.translate("1941-12-7") == datetime.date(1941, 12, 7)
@@ -462,7 +461,7 @@ class TestXDateTime:
     """
 
     def testTranslateEmptyStringToPythonObject(self):
-        assert XDateTime.translate("") == None
+        assert XDateTime.translate("") is None
 
     def testTranslateStringToPythonObject(self):
         dt = datetime.datetime(1941, 12, 7, 10, 30, 22, 454000)
@@ -498,7 +497,7 @@ class TestXTime:
     """
 
     def testTranslateEmptyStringToPythonObject(self):
-        assert XTime.translate("") == None
+        assert XTime.translate("") is None
 
     def testTranslateStringToPythonObject(self):
         assert XTime.translate("10:30:22") == datetime.time(10, 30, 22)

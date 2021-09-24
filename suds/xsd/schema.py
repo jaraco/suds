@@ -23,12 +23,10 @@ transparent referenced type resolution and targeted denormalization.
 """
 
 
-from suds import *
-from suds.xsd import *
-from suds.xsd.sxbuiltin import *
+from suds import UnicodeMixin, objid, Repr
+from suds.xsd import isqref
 from suds.xsd.sxbasic import Factory as BasicFactory
 from suds.xsd.sxbuiltin import Factory as BuiltinFactory
-from suds.xsd.sxbase import SchemaObject
 from suds.xsd.deplist import DepList
 from suds.sax.element import Element
 from suds.sax import splitPrefix, Namespace
@@ -254,7 +252,7 @@ class Schema(UnicodeMixin):
         self.groups = collated[5]
         self.agrps = collated[6]
 
-    def merge(self, schema):
+    def merge(self, schema):  # noqa: C901
         """
         Merge the contents from the schema.  Only objects not already contained
         in this schema's collections are merged.  This is to provide for bidirectional
@@ -369,13 +367,13 @@ class Schema(UnicodeMixin):
         try:
             if isqref(ref):
                 ns = ref[1]
-                return ref[0] in Factory.tags and ns.startswith(w3)
+                return ref[0] in BuiltinFactory.tags and ns.startswith(w3)
             if context is None:
                 context = self.root
             prefix = splitPrefix(ref)[0]
             prefixes = context.findPrefixes(w3, "startswith")
-            return prefix in prefixes and ref[0] in Factory.tags
-        except:
+            return prefix in prefixes and ref[0] in BuiltinFactory.tags
+        except Exception:
             return False
 
     def instance(self, root, baseurl, options):

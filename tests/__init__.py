@@ -75,7 +75,7 @@ def compare_xml(lhs, rhs):
     return compare_xml_element(lhs.getChildren()[0], rhs.getChildren()[0])
 
 
-def compare_xml_element(lhs, rhs):
+def compare_xml_element(lhs, rhs):  # noqa: C901
     """
     Compares two XML elements.
 
@@ -110,8 +110,8 @@ def compare_xml_element(lhs, rhs):
         return False
     if len(lhs.getChildren()) != len(rhs.getChildren()):
         return False
-    for l, r in zip(lhs.getChildren(), rhs.getChildren()):
-        if not compare_xml_element(l, r):
+    for ell, r in zip(lhs.getChildren(), rhs.getChildren()):
+        if not compare_xml_element(ell, r):
             return False
     return True
 

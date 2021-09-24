@@ -13,12 +13,8 @@
 # 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 # written by: Jeff Ortel ( jortel@redhat.com )
 
-import sys
-
-sys.path.append("../../")
 
 import traceback as tb
-from tests import *
 from suds import WebFault
 from suds.client import Client
 

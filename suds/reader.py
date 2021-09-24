@@ -20,10 +20,9 @@ caching system.
 """
 
 
-from suds.cache import Cache, NoCache
+from suds.cache import NoCache
 from suds.plugin import PluginContainer
 from suds.sax.parser import Parser
-from suds.store import DocumentStore
 from suds.transport import Request
 
 

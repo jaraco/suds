@@ -23,7 +23,11 @@ from suds.sax.parser import Parser
 
 
 def basic():
-    xml = "<a>Me &amp;&amp; &lt;b&gt;my&lt;/b&gt; shadow&apos;s &lt;i&gt;dog&lt;/i&gt; love to &apos;play&apos; and sing &quot;la,la,la&quot;;</a>"
+    xml = (
+        "<a>Me &amp;&amp; &lt;b&gt;my&lt;/b&gt; "
+        "shadow&apos;s &lt;i&gt;dog&lt;/i&gt; "
+        "love to &apos;play&apos; and sing &quot;la,la,la&quot;;</a>"
+    )
     p = Parser()
     d = p.parse(string=xml)
     a = d.root()
@@ -31,7 +35,8 @@ def basic():
     assert str(a) == xml
     b = Element("a")
     b.setText(
-        "Me &&amp; &lt;b>my</b> shadow's <i>dog</i> love to 'play' and sing \"la,la,la\";"
+        "Me &&amp; &lt;b>my</b> shadow's <i>dog</i> "
+        "love to 'play' and sing \"la,la,la\";"
     )
     print("B(encoded)=\n%s" % b)
     assert str(b) == xml

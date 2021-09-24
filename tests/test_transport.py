@@ -28,7 +28,6 @@ if __name__ == "__main__":
     __init__.runUsingPyTest(globals())
 
 
-import suds
 from suds.transport import Reply, Request
 
 import pytest

@@ -18,7 +18,7 @@
 The I{service definition} provides a textual representation of a service.
 """
 
-from suds import *
+from suds import UnicodeMixin, tostr
 import suds.metrics as metrics
 from suds.sax import Namespace
 
@@ -109,8 +109,8 @@ class ServiceDefinition(UnicodeMixin):
     def getprefixes(self):
         """Add prefixes for each namespace referenced by parameter types."""
         namespaces = []
-        for l in (self.params, self.types):
-            for t, r in l:
+        for ell in (self.params, self.types):
+            for t, r in ell:
                 ns = r.namespace()
                 if ns[1] is None:
                     continue
@@ -127,7 +127,6 @@ class ServiceDefinition(UnicodeMixin):
                 if ns[1] in namespaces:
                     continue
                 namespaces.append(ns[1])
-        i = 0
         namespaces.sort()
         for u in namespaces:
             p = self.nextprefix()
@@ -210,7 +209,10 @@ class ServiceDefinition(UnicodeMixin):
         @rtype: str
         """
         s = []
-        indent = lambda n: "\n%*s" % (n * 3, " ")
+
+        def indent(n):
+            return "\n%*s" % (n * 3, " ")
+
         s.append('Service ( %s ) tns="%s"' % (self.service.name, self.wsdl.tns[1]))
         s.append(indent(1))
         s.append("Prefixes (%d)" % len(self.prefixes))
@@ -233,7 +235,7 @@ class ServiceDefinition(UnicodeMixin):
                 sig.append(")")
                 try:
                     s.append("".join(sig))
-                except:
+                except Exception:
                     pass
             s.append(indent(3))
             s.append("Types (%d):" % len(self.types))
@@ -248,4 +250,4 @@ class ServiceDefinition(UnicodeMixin):
             return self.description()
         except Exception as e:
             log.exception(e)
-        return tostr(e)
+            return tostr(e)

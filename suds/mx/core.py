@@ -18,8 +18,6 @@
 Provides I{marshaller} core classes.
 """
 
-from suds import *
-from suds.mx import *
 from suds.mx.appender import ContentAppender
 from suds.sax.element import Element
 from suds.sax.document import Document
@@ -55,7 +53,7 @@ class Core:
             content.tag = content.value.__class__.__name__
         document = Document()
         if isinstance(content.value, Property):
-            root = self.node(content)
+            self.node(content)
         self.append(document, content)
         return document.root()
 

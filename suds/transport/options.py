@@ -19,8 +19,7 @@ Classes modeling transport options.
 """
 
 
-from suds.transport import *
-from suds.properties import *
+from suds.properties import Skin, Definition
 
 
 class Options(Skin):

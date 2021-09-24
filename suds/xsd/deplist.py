@@ -18,7 +18,7 @@
 The I{depsolve} module defines a class for performing dependency solving.
 """
 
-from suds import *
+from suds import Repr
 
 from logging import getLogger
 
@@ -124,7 +124,7 @@ class DepList:
         try:
             frame = self.stack.pop()
             return frame[0]
-        except:
+        except Exception:
             pass
 
 

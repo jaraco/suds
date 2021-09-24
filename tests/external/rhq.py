@@ -18,13 +18,8 @@
 # ( http://www.rhq-project.org )
 #
 
-import sys
-
-sys.path.append("../../")
-
 import traceback as tb
-from tests import *
-from suds import WebFault
+from suds import WebFault, tostr
 from suds.client import Client
 
 
@@ -37,11 +32,14 @@ def start(url):
     print("Test @ ( %s ) %d" % (url, errors))
 
 
-def rhqTest():
+def rhqTest():  # noqa: C901
 
     global errors
 
-    url = "http://localhost.localdomain:7080/rhq-rhq-enterprise-server-ejb3/WebservicesManagerBean?wsdl"
+    url = (
+        "http://localhost.localdomain:7080"
+        "/rhq-rhq-enterprise-server-ejb3/WebservicesManagerBean?wsdl"
+    )
     start(url)
     client = Client(url)
     print(client)
@@ -91,8 +89,8 @@ def rhqTest():
         #
         print("addPersion()")
         result = client.service.addPerson(person)
-        sent = client.last_sent()
-        rcvd = client.last_received()
+        client.last_sent()
+        client.last_received()
         print("\nreply(\n%s\n)\n" % result)
         #
         # create a new name object used to update the person

@@ -296,7 +296,7 @@ def test_FileCache_version(tmpdir):
     assert _isEmptyCacheFolder(cacheFolder.strpath)
     assert cache.get("unga1") is None
     assert cache.get("unga2") is None
-    assert cache2.get("unga1") is None
+    assert cache3.get("unga1") is None
     assert versionFile.read() == suds.__version__
 
 
@@ -320,9 +320,9 @@ def test_NoCache():
     cache = suds.cache.NoCache()
     assert isinstance(cache, suds.cache.Cache)
 
-    assert cache.get("id") == None
+    assert cache.get("id") is None
     cache.put("id", "something")
-    assert cache.get("id") == None
+    assert cache.get("id") is None
 
     # TODO: It should not be an error to call purge() or clear() on a NoCache
     # instance.
@@ -352,7 +352,6 @@ def _isEmptyCacheFolder(folder):
     def walkError(error):
         pytest.fail("Error attempting to walk through cache folder contents.")
 
-    count = 0
     for root, folders, files in os.walk(folder, onerror=walkError):
         assert root == folder
         return len(folders) == 0 and len(files) == 1 and files[0] == "version"

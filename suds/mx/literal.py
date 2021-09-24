@@ -18,13 +18,13 @@
 Provides literal I{marshaller} classes.
 """
 
-from suds import *
-from suds.mx import *
+from suds import TypeNotFound
+from suds.mx import Content
 from suds.mx.core import Core
 from suds.mx.typer import Typer
 from suds.resolver import GraphResolver, Frame
 from suds.sax.element import Element
-from suds.sudsobject import Factory
+from suds.sudsobject import Factory, Object
 
 from logging import getLogger
 
@@ -167,14 +167,6 @@ class Typed(Core):
         if default is not None:
             node.setText(default)
         return default
-
-    def optional(self, content):
-        if content.type.optional():
-            return True
-        for a in content.ancestry:
-            if a.optional():
-                return True
-        return False
 
     def encode(self, node, content):
         # Add (soap) encoding information only if the resolved type is derived

@@ -60,9 +60,11 @@ soap5_encoding_schema = suds.byte_str(
     <xs:anyAttribute namespace="##other" processContents="lax"/>
   </xs:attributeGroup>
 
-  <!-- Global Attributes.  The following attributes are intended to be usable via qualified attribute names on any complex type referencing them. -->
+  <!-- Global Attributes.  The following attributes are intended to be usable via \
+  qualified attribute names on any complex type referencing them. -->
 
-  <!-- Array attributes. Needed to give the type and dimensions of an array's contents, and the offset for partially-transmitted arrays. -->
+  <!-- Array attributes. Needed to give the type and dimensions of an array's \
+  contents, and the offset for partially-transmitted arrays. -->
 
   <xs:simpleType name="arrayCoordinate">
     <xs:restriction base="xs:string"/>
@@ -84,7 +86,8 @@ soap5_encoding_schema = suds.byte_str(
 
   <xs:group name="Array">
     <xs:sequence>
-      <xs:any namespace="##any" minOccurs="0" maxOccurs="unbounded" processContents="lax"/>
+      <xs:any namespace="##any" minOccurs="0" maxOccurs="unbounded" \
+processContents="lax"/>
     </xs:sequence>
   </xs:group>
 
@@ -108,7 +111,8 @@ soap5_encoding_schema = suds.byte_str(
 
   <xs:group name="Struct">
     <xs:sequence>
-      <xs:any namespace="##any" minOccurs="0" maxOccurs="unbounded" processContents="lax"/>
+      <xs:any namespace="##any" minOccurs="0" maxOccurs="unbounded" \
+processContents="lax"/>
     </xs:sequence>
   </xs:group>
 

@@ -20,7 +20,6 @@ designed for collecting and reporting performance metrics.
 """
 
 import time
-from suds import *
 from math import modf
 
 from logging import getLogger
@@ -52,7 +51,10 @@ class Timer:
         if self.started > 0 and self.stopped == 0:
             return "started: %d (running)" % self.started
         duration = self.duration()
-        jmod = lambda m: (m[1], m[0] * 1000)
+
+        def jmod(m):
+            return m[1], m[0] * 1000
+
         if duration < 1:
             ms = duration * 1000
             return "%d (ms)" % ms

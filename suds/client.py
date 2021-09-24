@@ -20,7 +20,16 @@ See I{README.txt}
 """
 
 import suds
-from suds import *
+from suds import (
+    TypeNotFound,
+    UnicodeMixin,
+    BuildError,
+    ServiceNotFound,
+    PortNotFound,
+    MethodNotFound,
+    WebFault,
+    tostr,
+)
 import suds.bindings.binding
 from suds.builder import Builder
 from suds.cache import ObjectCache
@@ -30,7 +39,6 @@ from suds.plugin import PluginContainer
 from suds.properties import Unskin
 from suds.reader import DefinitionsReader
 from suds.resolver import PathResolver
-from suds.sax.document import Document
 from suds.sax.parser import Parser
 from suds.servicedefinition import ServiceDefinition
 from suds.transport import TransportError, Request
@@ -42,7 +50,6 @@ from . import sudsobject
 from http.cookiejar import CookieJar
 from copy import deepcopy
 import http.client
-from urllib.parse import urlparse
 
 from logging import getLogger
 
@@ -629,7 +636,7 @@ class SoapClient:
             reply=reply.message, original_soapenv=original_soapenv
         )
 
-    def process_reply(
+    def process_reply(  # noqa: C901
         self, reply, status=None, description=None, original_soapenv=None
     ):
         if status is None:

@@ -37,7 +37,6 @@ import pytest
 
 import base64
 import sys
-import urllib.request, urllib.error, urllib.parse
 
 
 class MyException(Exception):
@@ -151,7 +150,7 @@ def test_http_request_URL_with_a_missing_protocol_identifier(url):
     pytest.raises(exceptionClass, client.service.f)
 
 
-def test_sending_unicode_data(monkeypatch):
+def test_sending_unicode_data(monkeypatch):  # noqa: C901
     """
     Original suds implementation passed its request location URL to the
     underlying HTTP request object as a unicode string.

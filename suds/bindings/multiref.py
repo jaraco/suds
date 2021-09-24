@@ -17,9 +17,6 @@
 Provides classes for handling soap multirefs.
 """
 
-from suds import *
-from suds.sax.element import Element
-
 
 soapenc = (None, "http://schemas.xmlsoap.org/soap/encoding/")
 

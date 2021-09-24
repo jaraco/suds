@@ -18,8 +18,8 @@
 Provides XML I{attribute} classes.
 """
 
-from suds import *
-from suds.sax import *
+from suds import UnicodeMixin
+from suds.sax import splitPrefix, Namespace
 from suds.sax.text import Text
 
 

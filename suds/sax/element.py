@@ -18,8 +18,8 @@
 Provides XML I{element} classes.
 """
 
-from suds import *
-from suds.sax import *
+from suds import UnicodeMixin
+from suds.sax import splitPrefix, Namespace
 from suds.sax.text import Text
 from suds.sax.attribute import Attribute
 
@@ -203,7 +203,7 @@ class Element(UnicodeMixin):
         try:
             attr = self.getAttribute(name)
             self.attributes.remove(attr)
-        except:
+        except Exception:
             pass
         return self
 
@@ -939,7 +939,7 @@ class NodeIterator:
             child = self.children[self.pos]
             self.pos += 1
             return child
-        except:
+        except Exception:
             raise StopIteration()
 
 

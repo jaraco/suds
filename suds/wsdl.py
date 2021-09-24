@@ -20,7 +20,7 @@ The primary class is I{Definitions} as it represents the root element
 found in the document.
 """
 
-from suds import *
+from suds import objid, TypeNotFound, MethodNotFound
 from suds.sax.element import Element
 from suds.bindings.document import Document
 from suds.bindings.rpc import RPC, Encoded
@@ -31,7 +31,6 @@ from suds.sudsobject import Object, Facade, Metadata
 from suds.reader import DocumentReader
 
 import re
-from . import soaparray
 from urllib.parse import urljoin
 
 from logging import getLogger
@@ -521,7 +520,7 @@ class PortType(NamedObject):
         """
         try:
             return self.operations[name]
-        except Exception as e:
+        except Exception:
             raise MethodNotFound(name)
 
     def __gt__(self, other):
@@ -618,7 +617,7 @@ class Binding(NamedObject):
         if parts is None:
             body.parts = ()
         else:
-            body.parts = re.split("[\s,]", parts)
+            body.parts = re.split(r"[\s,]", parts)
         body.use = root.get("use", default="literal")
         ns = root.get("namespace")
         if ns is None:
@@ -765,7 +764,7 @@ class Binding(NamedObject):
         """
         try:
             return self.operations[name]
-        except:
+        except Exception:
             raise MethodNotFound(name)
 
     def __gt__(self, other):

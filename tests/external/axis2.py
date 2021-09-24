@@ -13,12 +13,7 @@
 # 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 # written by: Jeff Ortel ( jortel@redhat.com )
 
-import sys
-
-sys.path.append("../../")
-
-from tests import *
-from suds import *
+from suds import tostr
 from suds.client import Client
 from datetime import datetime
 

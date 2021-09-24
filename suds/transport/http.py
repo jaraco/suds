@@ -19,15 +19,16 @@ Contains classes for basic HTTP transport implementations.
 """
 
 from suds.properties import Unskin
-from suds.transport import *
+from . import Transport, TransportError, Reply
 
 import base64
 from http.cookiejar import CookieJar
 import http.client
 import socket
 import sys
-import urllib.request, urllib.error, urllib.parse
-from urllib.parse import urlparse
+import urllib.request
+import urllib.error
+import urllib.parse
 
 from logging import getLogger
 
@@ -164,7 +165,7 @@ class HttpTransport(Transport):
         @rtype: float
         """
         try:
-            part = urllib2.__version__.split(".", 1)
+            part = urllib.request.__version__.split(".", 1)
             return float(".".join(part))
         except Exception as e:
             log.exception(e)
