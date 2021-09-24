@@ -19,15 +19,6 @@
 # 'setuptools' related packages.
 from setuptools import setup, find_packages
 
-import sys
-
-
-extra_setup_params = {}
-
-if sys.version_info >= (2, 5):
-    # distutils.setup() 'obsoletes' parameter not introduced until Python 2.5.
-    extra_setup_params["obsoletes"] = ["suds"]
-
 with open('README.rst') as strm:
     long_description = strm.read()
 
@@ -80,6 +71,5 @@ setup(
     # using 'classifiers'.
     license="(specified using classifiers)",
     platforms=["(specified using classifiers)"],
-
-    **extra_setup_params
+    obsoletes=["suds"],
 )
