@@ -62,10 +62,4 @@ setup(
         "Programming Language :: Python :: 3",
         "Programming Language :: Python :: 3 :: Only",
         "Topic :: Internet"],
-
-    #   PEP-314 states that if possible license & platform should be specified
-    # using 'classifiers'.
-    license="(specified using classifiers)",
-    platforms=["(specified using classifiers)"],
-    obsoletes=["suds"],
 )
