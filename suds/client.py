@@ -679,7 +679,7 @@ class SoapClient:
                 fault = self.get_fault(replyroot)
                 if fault:
                     if status != http.client.INTERNAL_SERVER_ERROR:
-                        log.warn(
+                        log.warning(
                             "Web service reported a SOAP processing "
                             "fault using an unexpected HTTP status code %d. "
                             "Reporting as an internal server error.",
